@@ -1,0 +1,170 @@
+---
+import { Font } from "astro:assets";
+---
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <title>Waste Atlas</title>
+        <Font cssVariable="--font-switzer" preload />
+        <Font cssVariable="--font-erode" preload />
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                background: black;
+                font-family:
+                    var(--font-switzer),
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    Roboto,
+                    Oxygen,
+                    Ubuntu,
+                    Cantarell,
+                    "Open Sans",
+                    "Helvetica Neue",
+                    sans-serif;
+            }
+
+            .title {
+                z-index: 1;
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                color: black;
+                background-color: #d9d9d9;
+                border: 1px solid #747474;
+                padding: 10px 20px;
+                border-radius: 20px;
+                text-transform: uppercase;
+                font-size: 32px;
+                font-family: var(--font-switzer);
+            }
+
+            html,
+            body,
+            #map {
+                height: 100%;
+            }
+
+            .panel {
+                background-color: #d9d9d9;
+                border: 1px solid #747474;
+                color: black;
+                z-index: 1;
+                position: absolute;
+            }
+
+            .submit {
+                bottom: 10px;
+                left: 10px;
+                padding: 10px;
+                border-radius: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="panel title">Waste Atlas</div>
+        <div class="panel submit">▲</div>
+        <div id="map"></div>
+        <div
+            id="info-panel"
+            style="display:none; position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 4px; font-family: sans-serif; z-index: 1;"
+        >
+            <div id="zoom-level">Zoom: 2</div>
+            <div id="center-coords">Center: [-120, 50]</div>
+        </div>
+
+        <script>
+            import maplibre from "maplibre-gl";
+            import "maplibre-gl/dist/maplibre-gl.css";
+
+            const map = new maplibre.Map({
+                container: "map",
+                style: "https://api.maptiler.com/maps/dataviz/style.json?key=bLo8xe0MLrejy29a8JsL",
+                center: [0, 40],
+                zoom: 1.3,
+                maxZoom: 8,
+                hash: true,
+                maplibreLogo: false,
+            });
+
+            // Update info panel when map moves
+            map.on("move", () => {
+                // Update zoom level
+                const zoomDisplay = document.getElementById("zoom-level");
+                zoomDisplay.textContent = `Zoom: ${map.getZoom().toFixed(2)}`;
+
+                // Update center coordinates
+                const center = map.getCenter();
+                const centerDisplay = document.getElementById("center-coords");
+                centerDisplay.textContent = `Center: [${center.lng.toFixed(4)}, ${center.lat.toFixed(4)}]`;
+            });
+
+            map.on("load", () => {
+                map.addSource("waste", {
+                    type: "geojson",
+                    data: "map.json",
+                });
+
+                // map.loadImage("./recycle.png").then((image) =>
+                //     map.addImage("recycle", image.data),
+                // );
+
+                map.addLayer({
+                    id: "waste",
+                    type: "circle",
+                    source: "waste",
+                    paint: {
+                        "circle-radius": [
+                            "interpolate",
+                            ["linear"],
+                            ["zoom"],
+                            0,
+                            0,
+                            20,
+                            30,
+                        ],
+                        "circle-color": "#979C35",
+                        "circle-stroke-color": "#3c3e15",
+                    },
+                });
+
+                map.on("click", "waste", (e) => {
+                    const feature = e.features[0];
+                    const props = feature.properties;
+                    const coordinates = feature.geometry.coordinates.slice();
+                    const description = `${props.name} - ${props.location}`;
+
+                    // Ensure that if the map is zoomed out such that multiple
+                    // copies of the feature are visible, the popup appears
+                    // over the copy being pointed to.
+                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                        coordinates[0] +=
+                            e.lngLat.lng > coordinates[0] ? 360 : -360;
+                    }
+
+                    new maplibre.Popup()
+                        .setLngLat(coordinates)
+                        .setHTML(description)
+                        .addTo(map);
+                });
+
+                // Change the cursor to a pointer when the mouse is over the places layer.
+                map.on("mouseenter", "waste", () => {
+                    map.getCanvas().style.cursor = "pointer";
+                });
+
+                // Change it back to a pointer when it leaves.
+                map.on("mouseleave", "waste", () => {
+                    map.getCanvas().style.cursor = "";
+                });
+            });
+        </script>
+    </body>
+</html>

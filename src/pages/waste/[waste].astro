@@ -1,0 +1,26 @@
+---
+import directus from "../../lib/directus";
+import { readItems } from "@directus/sdk";
+
+export async function getStaticPaths() {
+  const waste = await directus.request(
+    readItems("waste", {
+      fields: ["*"],
+    }),
+  );
+  return waste
+    .filter((waste) => !!waste.slug)
+    .map((waste) => ({
+      params: { waste: waste.slug },
+      props: waste,
+    }));
+}
+
+const waste = Astro.props;
+---
+
+<main>
+  <h1>{waste.name}</h1>
+  <h2>{waste.location}</h2>
+  <p>{waste.description}</p>
+</main>
