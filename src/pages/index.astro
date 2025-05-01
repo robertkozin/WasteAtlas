@@ -11,7 +11,21 @@ import { Font } from "astro:assets";
         <title>Waste Atlas</title>
         <Font cssVariable="--font-switzer" preload />
         <Font cssVariable="--font-erode" preload />
+        <link rel="stylesheet" href="/reset.css" />
         <style>
+            .icon {
+                vertical-align: -0.2em;
+                width: 1em;
+                height: 1em;
+                display: inline-block;
+            }
+
+            .bi {
+                display: inline-block;
+                vertical-align: -0.125em;
+                fill: currentcolor;
+            }
+
             body {
                 margin: 0;
                 padding: 0;
@@ -31,19 +45,93 @@ import { Font } from "astro:assets";
                     sans-serif;
             }
 
-            .title {
-                z-index: 1;
-                position: absolute;
+            .title-area {
                 top: 10px;
                 left: 10px;
-                color: black;
-                background-color: #d9d9d9;
-                border: 1px solid #747474;
                 padding: 10px 20px;
-                border-radius: 20px;
+                max-width: 580px;
+                border-radius: 30px;
+                transition: display 1s;
+            }
+
+            .title-area h1 {
                 text-transform: uppercase;
                 font-size: 32px;
-                font-family: var(--font-switzer);
+                font-weight: 500;
+            }
+
+            .title-area button {
+                position: absolute;
+                right: -10px;
+                bottom: -10px;
+                border-radius: 100px;
+                width: 30px;
+                height: 30px;
+                text-align: center;
+                vertical-align: middle;
+                font-size: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transform: rotate(180deg) translateY(-2px);
+            }
+
+            .title-area.open button {
+                transform: rotate(0deg);
+            }
+
+            .title-area.open section {
+                display: block;
+                /* max-height: 105px;
+                max-width: 580px;
+                overflow: hidden;
+                transition:
+                    max-width 1s ease-in-out 0s,
+                    max-height 1s ease-in-out 1s; */
+            }
+
+            .title-area:not(.open) section {
+                display: none;
+                /* max-height: 0;
+                max-width: 0;
+                overflow: hidden;
+                transition:
+                    max-height 1s ease-in-out 0s,
+                    max-width 1s ease-in-out 1s; */
+            }
+
+            .filter {
+                bottom: 45px;
+                right: 10px;
+                z-index: 5;
+                border-radius: 100px;
+            }
+
+            .filter small {
+                display: block;
+                position: absolute;
+                top: -25px;
+                left: 15px;
+                color: white;
+                text-transform: uppercase;
+                font-size: 13;
+            }
+
+            .filter div {
+                display: flex;
+                flex-direction: row;
+                gap: 20px;
+                list-style: none;
+                padding: 5px 10px;
+            }
+
+            .filter button {
+                border: none;
+                cursor: pointer;
+                width: 50px;
+                height: 50px;
+                background-color: red;
+                border-radius: 30px;
             }
 
             html,
@@ -63,14 +151,71 @@ import { Font } from "astro:assets";
             .submit {
                 bottom: 10px;
                 left: 10px;
-                padding: 10px;
-                border-radius: 20px;
+                border-radius: 50px;
+                width: 50px;
+                height: 50px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            button.panel {
+                cursor: pointer;
+            }
+
+            button.panel:hover {
+                opacity: 0.7;
             }
         </style>
     </head>
     <body>
-        <div class="panel title">Waste Atlas</div>
-        <div class="panel submit">▲</div>
+        <header class="title-area panel open">
+            <h1>Waste Atlas</h1>
+            <button class="panel">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon"
+                    ><path stroke="none" d="M0 0h24v24H0z" fill="none"
+                    ></path><path d="M6 15l6 -6l6 6"></path></svg
+                >
+            </button>
+            <section>
+                <p>
+                    As designers, wouldn't it be amazing to visualize what
+                    unexplored, readily accessible, cheap, local materials there
+                    are to work with? Through this open-source database we're
+                    trying to highlight the potential of local waste as new
+                    material. We want to map the waste and classify it so that
+                    it finds a home; so that we start blurring the lines of what
+                    waste truly is.
+                </p>
+            </section>
+        </header>
+
+
+        <button class="panel submit">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+              </svg>
+        </button>
+
+        <dialog closedby="any">
+            <h2>Complete the Map!</h2>
+            <p>
+                blablabla
+                By clicking the next button you´ll be directed to the the forms.            
+            </p>
+            <a href="docs.google.com/forms/d/e/1FAIpQLSfMDb1cRH8I07CLu9XBmOjz8kIOplMNrOg16Lv1OCvKpK6Ydg/viewform?usp=sharing">enlace a forms</a>
+          </dialog>
+
         <div id="map"></div>
         <div
             id="info-panel"
@@ -80,16 +225,28 @@ import { Font } from "astro:assets";
             <div id="center-coords">Center: [-120, 50]</div>
         </div>
 
+        <div class="filter panel">
+            <small>Choose the type of residue</small>
+            <div>
+                <button></button>
+                <button></button>
+                <button></button>
+                <button></button>
+                <button></button>
+            </div>
+        </div>
+
         <script>
             import maplibre from "maplibre-gl";
             import "maplibre-gl/dist/maplibre-gl.css";
 
             const map = new maplibre.Map({
                 container: "map",
-                style: "https://api.maptiler.com/maps/dataviz/style.json?key=bLo8xe0MLrejy29a8JsL",
+                //style: "https://api.maptiler.com/maps/dataviz/style.json?key=bLo8xe0MLrejy29a8JsL",
+                style: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
                 center: [0, 40],
                 zoom: 1.3,
-                maxZoom: 8,
+                maxZoom: 9,
                 hash: true,
                 maplibreLogo: false,
             });
@@ -128,10 +285,13 @@ import { Font } from "astro:assets";
                             0,
                             0,
                             20,
-                            30,
+                            20,
                         ],
-                        "circle-color": "#979C35",
-                        "circle-stroke-color": "#3c3e15",
+                        "circle-color": "#ffffff",
+                        "circle-opacity": 0.7,
+                        "circle-stroke-color": "#ffffff",
+                        "circle-stroke-width": 2,
+                        "circle-stroke-opacity": 1.0,
                     },
                 });
 
@@ -139,7 +299,8 @@ import { Font } from "astro:assets";
                     const feature = e.features[0];
                     const props = feature.properties;
                     const coordinates = feature.geometry.coordinates.slice();
-                    const description = `${props.name} - ${props.location}`;
+                    const description = `<a href="/waste/${props.slug}">${props.name} - ${props.location}</a><br/>
+${props.category}<br/>`;
 
                     // Ensure that if the map is zoomed out such that multiple
                     // copies of the feature are visible, the popup appears
@@ -164,6 +325,13 @@ import { Font } from "astro:assets";
                 map.on("mouseleave", "waste", () => {
                     map.getCanvas().style.cursor = "";
                 });
+            });
+        </script>
+
+        <script>
+            let $titleareabutton = document.querySelector(".title-area button");
+            $titleareabutton?.addEventListener("click", (e) => {
+                e.target.closest(".title-area").classList.toggle("open");
             });
         </script>
     </body>

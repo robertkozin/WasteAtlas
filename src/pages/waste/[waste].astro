@@ -1,6 +1,7 @@
 ---
 import directus from "../../lib/directus";
 import { readItems } from "@directus/sdk";
+import { Font } from "astro:assets";
 
 export async function getStaticPaths() {
   const waste = await directus.request(
@@ -19,8 +20,87 @@ export async function getStaticPaths() {
 const waste = Astro.props;
 ---
 
-<main>
-  <h1>{waste.name}</h1>
-  <h2>{waste.location}</h2>
-  <p>{waste.description}</p>
-</main>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>TODO:</title>
+    <Font cssVariable="--font-switzer" preload />
+    <Font cssVariable="--font-erode" preload />
+
+    <style>
+      h1 {
+        font-family: var(--font-switzer);
+        font-size: 100px;
+        margin: 0;
+        font-weight: 500;
+      }
+
+      h2 {
+        font-family: var(--font-erode);
+        margin: 0;
+        color: #979c35;
+        font-size: 40px;
+        font-weight: 500;
+      }
+
+      p {
+        font-size: 16px;
+        font-family: var(--font-switzer);
+      }
+
+      .banner {
+        background-color: #fdd22a;
+        color: #000;
+        font-family: var(--font-erode);
+        font-weight: 500;
+        font-size: 64px;
+        position: absolute;
+        top: 0px;
+        right: -100px;
+        width: 100%;
+        transform: rotate(45deg);
+        display: flex;
+        overflow: hidden;
+        white-space: nowrap;
+        gap: 0;
+        width: 500px;
+      }
+
+      .banner:hover span {
+        animation-play-state: paused;
+      }
+
+      .banner span {
+        padding-left: .8ch;
+        animation-duration: 15s;
+        animation-iteration-count: infinite;
+        animation-name: marquee-content;
+        animation-timing-function: linear;
+        display: block;
+      }
+
+      @keyframes marquee-content {
+        0% {
+          transform: translateX(100);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>{waste.name}</h1>
+      <h2>{waste.location}</h2>
+      <p>{waste.description}</p>
+      <div class="banner">
+        <span>{waste.characteristics}</span><span>{waste.characteristics}</span>
+      </div>
+    </main>
+  </body>
+</html>
