@@ -1,4 +1,5 @@
-import { createDirectus, rest, staticToken, withToken, } from '@directus/sdk';
+import { createDirectus, rest, staticToken, withToken } from '@directus/sdk';
+import type { DirectusFile } from '@directus/sdk'
 
 type Waste = {
   id: number;
@@ -8,6 +9,7 @@ type Waste = {
   slug?: string;
   category?: string;
   characteristics?: string;
+  image?: DirectusFile;
   description?: string;
   point?: Point;
   submitted_on?: string;

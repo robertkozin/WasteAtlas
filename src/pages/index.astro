@@ -130,8 +130,95 @@ import { Font } from "astro:assets";
                 cursor: pointer;
                 width: 50px;
                 height: 50px;
-                background-color: red;
                 border-radius: 30px;
+                color: white;
+                font-weight: bold;
+                transition: all 0.2s ease;
+                position: relative;
+            }
+            
+            .filter button.active {
+                transform: scale(1.1);
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            }
+            
+            .filter button.active::after {
+                content: '';
+                position: absolute;
+                top: -5px;
+                right: -5px;
+                width: 12px;
+                height: 12px;
+                background-color: white;
+                border-radius: 50%;
+            }
+            
+            /* Dialog styles */
+            dialog {
+                padding: 1.5rem;
+                max-width: 400px;
+                border-radius: 15px;
+                border: 1px solid #747474;
+                background-color: rgba(242, 242, 242, 0.95);
+                box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
+                backdrop-filter: blur(10px);
+                color: black;
+                z-index: 100;
+            }
+            
+            dialog::backdrop {
+                background-color: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(2px);
+            }
+            
+            dialog h2 {
+                margin-top: 0;
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin-bottom: 1rem;
+            }
+            
+            dialog p {
+                margin-bottom: 1.5rem;
+                line-height: 1.5;
+            }
+            
+            .dialog-buttons {
+                display: flex;
+                justify-content: flex-end;
+                gap: 1rem;
+                margin-top: 1.5rem;
+            }
+            
+            #close-dialog {
+                background-color: transparent;
+                border: 1px solid #747474;
+                padding: 0.5rem 1rem;
+                border-radius: 30px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+            
+            #close-dialog:hover {
+                background-color: rgba(0, 0, 0, 0.05);
+            }
+            
+            .form-link {
+                display: inline-block;
+                background-color: #000;
+                color: white;
+                text-decoration: none;
+                padding: 0.5rem 1.5rem;
+                border-radius: 30px;
+                font-size: 14px;
+                font-weight: 500;
+                transition: all 0.2s ease;
+            }
+            
+            .form-link:hover {
+                background-color: #333;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             }
 
             html,
@@ -141,11 +228,12 @@ import { Font } from "astro:assets";
             }
 
             .panel {
-                background-color: #d9d9d9;
+                background-color: rgba(217, 217, 217, 0.85);
                 border: 1px solid #747474;
                 color: black;
                 z-index: 1;
                 position: absolute;
+                backdrop-filter: blur(2px);
             }
 
             .submit {
@@ -165,6 +253,293 @@ import { Font } from "astro:assets";
 
             button.panel:hover {
                 opacity: 0.7;
+            }
+            
+            /* Sidebar styles */
+            .sidebar {
+                position: absolute;
+                right: 10px;
+                top: 10px;
+                max-height: 80vh;
+                width: 320px;
+                background-color: rgba(217, 217, 217, 0.3);
+                z-index: 10;
+                overflow-y: auto;
+                transition: transform 0.3s ease;
+                border-radius: 15px;
+                padding: 5px;
+                backdrop-filter: blur(2px);
+                border: 1px solid rgba(116, 116, 116, 0.3);
+            }
+            
+            .sidebar.collapsed {
+                width: 100px;
+                overflow-x: hidden;
+            }
+            
+            .sidebar.collapsed .waste-item-text {
+                display: none;
+            }
+            
+            .sidebar.collapsed .waste-item {
+                padding: 8px;
+                margin-bottom: 8px;
+                justify-content: center;
+            }
+            
+            .sidebar.collapsed .waste-thumbnail {
+                max-height: 80px;
+                max-width: 80px;
+                height: 80px;
+                width: 80px;
+                object-fit: cover;
+            }
+            
+            .sidebar.collapsed .waste-image-container {
+                width: 80px;
+                height: 80px;
+                margin: 0;
+                border-radius: 10px;
+                overflow: hidden;
+            }
+            
+            .sidebar.collapsed .no-image {
+                height: 80px;
+                width: 80px;
+            }
+            
+            .sidebar-toggle {
+                position: absolute;
+                left: -30px;
+                top: 50px;
+                width: 30px;
+                height: 50px;
+                background-color: rgba(217, 217, 217, 0.85);
+                border: 1px solid #747474;
+                border-right: none;
+                border-radius: 5px 0 0 5px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 10;
+                backdrop-filter: blur(2px);
+            }
+            
+            .waste-list {
+                padding: 10px 5px;
+                max-height: 75vh;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .waste-item {
+                padding: 10px;
+                background-color: rgba(217, 217, 217, 0.85);
+                border: 1px solid #747474;
+                border-radius: 15px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                backdrop-filter: blur(2px);
+                display: flex;
+                align-items: center;
+            }
+            
+            .sidebar.collapsed .waste-item {
+                padding: 5px;
+                margin-bottom: 8px;
+                width: 75px;
+                display: flex;
+                justify-content: center;
+            }
+            
+            .waste-item:hover {
+                background-color: rgba(229, 229, 229, 0.9);
+                transform: translateY(-2px);
+                box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            }
+            
+            .waste-item.active {
+                background-color: rgba(255, 255, 255, 0.9);
+                box-shadow: 0 0 0 2px #900000;
+            }
+            
+            .sidebar.collapsed .waste-item.active {
+                box-shadow: 0 0 0 3px #900000;
+                transform: scale(1.05);
+            }
+            
+            .waste-detail {
+                padding: 15px;
+                max-height: 70vh;
+                overflow-y: auto;
+                background-color: rgba(217, 217, 217, 0.85);
+                border: 1px solid #747474;
+                border-radius: 15px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                backdrop-filter: blur(3px);
+            }
+            
+            .waste-color-indicator {
+                display: inline-block;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                margin-right: 6px;
+                vertical-align: middle;
+                border: 1px solid rgba(255,255,255,0.7);
+                box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            }
+            
+            .waste-name {
+                font-weight: bold;
+                font-size: 15px;
+                display: inline-block;
+                vertical-align: middle;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 190px;
+            }
+            
+            .waste-location {
+                font-size: 13px;
+                color: #333;
+                margin-top: 3px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 220px;
+            }
+            
+            .waste-category {
+                display: inline-block;
+                padding: 3px 10px;
+                border-radius: 15px;
+                color: white;
+                font-size: 12px;
+                margin-top: 8px;
+                text-transform: uppercase;
+                font-weight: 500;
+                letter-spacing: 0.5px;
+            }
+            
+            .back-to-list {
+                display: inline-block;
+                margin-bottom: 15px;
+                cursor: pointer;
+                color: #333;
+                text-decoration: underline;
+            }
+            
+            /* Close button hover effect */
+            .close-sidebar:hover {
+                background-color: #e5e5e5 !important;
+                transform: rotate(90deg);
+                transition: transform 0.3s, background-color 0.2s;
+            }
+            
+            /* Image styles */
+            .waste-image-container {
+                overflow: hidden;
+                border-radius: 8px;
+                flex-shrink: 0;
+                margin-right: 10px;
+                width: 60px;
+                height: 60px;
+            }
+            
+            .waste-thumbnail {
+                width: 60px;
+                height: 60px;
+                object-fit: cover;
+                border-radius: 8px;
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.collapsed .waste-thumbnail {
+                max-height: 75px;
+                max-width: 75px;
+                height: 75px;
+                width: 75px;
+                object-fit: cover;
+            }
+            
+            .sidebar.collapsed .waste-image-container {
+                width: 75px;
+                height: 75px;
+                margin: 0;
+                border-radius: 10px;
+                overflow: hidden;
+            }
+            
+            .sidebar.collapsed .no-image {
+                height: 75px;
+                width: 75px;
+            }
+            
+            .waste-thumbnail:hover {
+                transform: scale(1.05);
+            }
+            
+            .waste-detail-image {
+                margin: 15px 0;
+                text-align: center;
+            }
+            
+            .waste-detail-image img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 10px;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            }
+            
+            /* Placeholder styles for missing images */
+            .no-image {
+                height: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+            }
+            
+            .no-image-placeholder {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .no-image-placeholder svg {
+                width: 30px;
+                height: 30px;
+            }
+            
+            .no-image-large {
+                height: 200px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 10px;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            }
+            
+            .waste-item-content {
+                display: flex;
+                align-items: center;
+            }
+            
+            .waste-item-text {
+                flex: 1;
+                min-width: 0; /* Allows text to truncate properly */
+            }
+            
+            .waste-item-header {
+                display: flex;
+                align-items: center;
+                margin-bottom: 5px;
             }
         </style>
     </head>
@@ -201,20 +576,23 @@ import { Font } from "astro:assets";
         </header>
 
 
-        <button class="panel submit">
+        <button class="panel submit" id="submit-button">
             <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-              </svg>
+            </svg>
         </button>
 
-        <dialog closedby="any">
-            <h2>Complete the Map!</h2>
+        <dialog id="submit-dialog">
+            <h2>Contribute to Waste Atlas</h2>
             <p>
-                blablabla
-                By clicking the next button you´ll be directed to the the forms.            
+                Help us expand our database by submitting information about waste sources in your area.
+                Your contribution will help designers discover new potential materials.
             </p>
-            <a href="docs.google.com/forms/d/e/1FAIpQLSfMDb1cRH8I07CLu9XBmOjz8kIOplMNrOg16Lv1OCvKpK6Ydg/viewform?usp=sharing">enlace a forms</a>
-          </dialog>
+            <div class="dialog-buttons">
+                <button id="close-dialog">Cancel</button>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSfMDb1cRH8I07CLu9XBmOjz8kIOplMNrOg16Lv1OCvKpK6Ydg/viewform?usp=sharing" target="_blank" class="form-link">Open Submission Form</a>
+            </div>
+        </dialog>
 
         <div id="map"></div>
         <div
@@ -228,11 +606,52 @@ import { Font } from "astro:assets";
         <div class="filter panel">
             <small>Choose the type of residue</small>
             <div>
-                <button></button>
-                <button></button>
-                <button></button>
-                <button></button>
-                <button></button>
+                <button data-category="commercial" style="background-color: #FF5733;">C</button>
+                <button data-category="domestic" style="background-color: #33FF57;">D</button>
+                <button data-category="construction" style="background-color: #3357FF;">B</button>
+                <button data-category="agricultural" style="background-color: #F3FF33;">A</button>
+                <button data-category="industrial" style="background-color: #FF33F3;">I</button>
+            </div>
+        </div>
+        
+        <!-- Sidebar - starts in image-only mode -->
+        <div id="sidebar" class="sidebar collapsed panel">
+            <div class="sidebar-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </div>
+            
+            <!-- List View -->
+            <div id="waste-list-view">
+                <button class="close-sidebar" style="position: absolute; right: 10px; top: 10px; z-index: 11; background: rgba(217, 217, 217, 0.85); border: 1px solid #747474; width: 25px; height: 25px; border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="waste-list" id="waste-items-container">
+                    <!-- Waste items will be loaded here dynamically -->
+                </div>
+            </div>
+            
+            <!-- Detail View -->
+            <div id="waste-detail-view" style="display: none;">
+                <button class="close-sidebar" style="position: absolute; right: 10px; top: 10px; z-index: 11; background: rgba(217, 217, 217, 0.85); border: 1px solid #747474; width: 25px; height: 25px; border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="waste-detail">
+                    <div class="back-to-list">← Back to list</div>
+                    <h2 id="detail-waste-name">WASTE NAME</h2>
+                    <div id="detail-waste-location">location</div>
+                    <div id="detail-waste-category" class="waste-category">category</div>
+                    <div id="detail-waste-content" style="margin-top: 15px;">
+                        <!-- Additional waste details will be shown here -->
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -250,6 +669,9 @@ import { Font } from "astro:assets";
                 hash: true,
                 maplibreLogo: false,
             });
+            
+            // Store map instance globally for filter access
+            window.mapInstance = map;
 
             // Update info panel when map moves
             map.on("move", () => {
@@ -287,9 +709,27 @@ import { Font } from "astro:assets";
                             20,
                             20,
                         ],
-                        "circle-color": "#ffffff",
+                        "circle-color": [
+                            "match",
+                            ["get", "category"],
+                            "commercial", "#FF5733", // Orange
+                            "domestic", "#33FF57", // Green
+                            "construction", "#3357FF", // Blue
+                            "agricultural", "#F3FF33", // Yellow
+                            "industrial", "#FF33F3", // Purple
+                            "#ffffff" // Default color for any other category
+                        ],
                         "circle-opacity": 0.7,
-                        "circle-stroke-color": "#ffffff",
+                        "circle-stroke-color": [
+                            "match",
+                            ["get", "category"],
+                            "commercial", "#FF5733",
+                            "domestic", "#33FF57",
+                            "construction", "#3357FF", 
+                            "agricultural", "#F3FF33",
+                            "industrial", "#FF33F3",
+                            "#ffffff"
+                        ],
                         "circle-stroke-width": 2,
                         "circle-stroke-opacity": 1.0,
                     },
@@ -299,21 +739,28 @@ import { Font } from "astro:assets";
                     const feature = e.features[0];
                     const props = feature.properties;
                     const coordinates = feature.geometry.coordinates.slice();
-                    const description = `<a href="/waste/${props.slug}">${props.name} - ${props.location}</a><br/>
+                    
+                    // Call the handleWasteClick function to show details in sidebar
+                    if (window.handleWasteClick) {
+                        window.handleWasteClick(feature);
+                    } else {
+                        // Fallback to popup if sidebar functionality isn't loaded yet
+                        const description = `<a href="/waste/${props.slug}">${props.name} - ${props.location}</a><br/>
 ${props.category}<br/>`;
 
-                    // Ensure that if the map is zoomed out such that multiple
-                    // copies of the feature are visible, the popup appears
-                    // over the copy being pointed to.
-                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                        coordinates[0] +=
-                            e.lngLat.lng > coordinates[0] ? 360 : -360;
-                    }
+                        // Ensure that if the map is zoomed out such that multiple
+                        // copies of the feature are visible, the popup appears
+                        // over the copy being pointed to.
+                        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                            coordinates[0] +=
+                                e.lngLat.lng > coordinates[0] ? 360 : -360;
+                        }
 
-                    new maplibre.Popup()
-                        .setLngLat(coordinates)
-                        .setHTML(description)
-                        .addTo(map);
+                        new maplibre.Popup()
+                            .setLngLat(coordinates)
+                            .setHTML(description)
+                            .addTo(map);
+                    }
                 });
 
                 // Change the cursor to a pointer when the mouse is over the places layer.
@@ -333,6 +780,336 @@ ${props.category}<br/>`;
             $titleareabutton?.addEventListener("click", (e) => {
                 e.target.closest(".title-area").classList.toggle("open");
             });
+
+            // Filter functionality
+            const filterButtons = document.querySelectorAll('.filter button');
+            const activeFilters = new Set(); // Track active category filters
+            
+            // Add click event listeners to filter buttons
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const category = button.getAttribute('data-category');
+                    
+                    // Toggle active state
+                    if (button.classList.contains('active')) {
+                        button.classList.remove('active');
+                        activeFilters.delete(category);
+                    } else {
+                        button.classList.add('active');
+                        activeFilters.add(category);
+                    }
+                    
+                    // Apply filter to map
+                    applyFilters();
+                    
+                    // Update sidebar items based on active filters
+                    updateSidebarItems();
+                });
+            });
+            
+            // Function to apply filters to the map
+            function applyFilters() {
+                const map = window.mapInstance; // Access the map instance
+                
+                if (!map) return;
+                
+                // If no filters are active, show all categories
+                if (activeFilters.size === 0) {
+                    map.setFilter('waste', null);
+                    return;
+                }
+                
+                // Create a filter expression for the categories
+                const filterExpression = ['in', ['get', 'category'], ...Array.from(activeFilters)];
+                map.setFilter('waste', filterExpression);
+            }
+            
+            // Sidebar functionality
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.querySelector('.sidebar-toggle');
+            const wasteListView = document.getElementById('waste-list-view');
+            const wasteDetailView = document.getElementById('waste-detail-view');
+            const wasteItemsContainer = document.getElementById('waste-items-container');
+            const backToListBtn = document.querySelector('.back-to-list');
+            const closeButtons = document.querySelectorAll('.close-sidebar');
+            
+            // Waste data stored globally
+            let wasteData = [];
+            
+            // Toggle sidebar between full and image-only modes
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                
+                // Change the direction of the arrow based on collapse state
+                const arrow = sidebarToggle.querySelector('svg');
+                if (sidebar.classList.contains('collapsed')) {
+                    arrow.innerHTML = '<polyline points="9 18 15 12 9 6"></polyline>';
+                    // Hide the close button when in collapsed state
+                    document.querySelectorAll('.close-sidebar').forEach(btn => {
+                        btn.style.display = 'none';
+                    });
+                } else {
+                    arrow.innerHTML = '<polyline points="15 18 9 12 15 6"></polyline>';
+                    // Show the close button when expanded
+                    document.querySelectorAll('.close-sidebar').forEach(btn => {
+                        btn.style.display = 'flex';
+                    });
+                }
+            });
+            
+            // Add event listeners to close buttons
+            closeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    sidebar.classList.add('collapsed');
+                    const arrow = sidebarToggle.querySelector('svg');
+                    arrow.innerHTML = '<polyline points="9 18 15 12 9 6"></polyline>';
+                    
+                    // Hide all close buttons
+                    document.querySelectorAll('.close-sidebar').forEach(btn => {
+                        btn.style.display = 'none';
+                    });
+                });
+            });
+            
+            // Handle back button click
+            backToListBtn.addEventListener('click', () => {
+                showListView();
+            });
+            
+            // Show list view
+            function showListView() {
+                wasteDetailView.style.display = 'none';
+                wasteListView.style.display = 'block';
+            }
+            
+            // Show detail view
+            function showDetailView(wasteItem) {
+                if (sidebar.classList.contains('collapsed')) {
+                    // If sidebar is collapsed, expand it before showing details
+                    sidebar.classList.remove('collapsed');
+                    const arrow = sidebarToggle.querySelector('svg');
+                    arrow.innerHTML = '<polyline points="15 18 9 12 15 6"></polyline>';
+                    
+                    // Show the close buttons
+                    document.querySelectorAll('.close-sidebar').forEach(btn => {
+                        btn.style.display = 'flex';
+                    });
+                }
+                
+                wasteListView.style.display = 'none';
+                wasteDetailView.style.display = 'block';
+                
+                // Update detail view with waste information
+                document.getElementById('detail-waste-name').textContent = wasteItem.properties.name;
+                document.getElementById('detail-waste-location').textContent = wasteItem.properties.location;
+                
+                const categoryElement = document.getElementById('detail-waste-category');
+                categoryElement.textContent = wasteItem.properties.category;
+                
+                // Set category-specific background color
+                const categoryColor = getCategoryColor(wasteItem.properties.category);
+                categoryElement.style.backgroundColor = categoryColor;
+                
+                // Create image HTML (with fallback for missing images)
+                let imageHtml;
+                if (wasteItem.properties.imageUrl) {
+                    // Real image
+                    const largerImageUrl = wasteItem.properties.imageUrl.replace('width=200&height=200', 'width=300&height=300');
+                    imageHtml = `<div class="waste-detail-image">
+                        <img src="${largerImageUrl}" alt="${wasteItem.properties.name}" />
+                    </div>`;
+                } else {
+                    // Fallback image with category color
+                    imageHtml = `<div class="waste-detail-image">
+                        <div class="no-image-large" style="background-color: ${categoryColor}33;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="${categoryColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                        </div>
+                    </div>`;
+                }
+                
+                // Add content to detail view
+                document.getElementById('detail-waste-content').innerHTML = `
+                    ${imageHtml}
+                    <p>ID: ${wasteItem.id}</p>
+                    <p>Coordinates: ${wasteItem.geometry.coordinates.join(', ')}</p>
+                    <a href="/waste/${wasteItem.properties.slug}" class="view-more">View detailed page</a>
+                `;
+            }
+            
+            // Fetch waste data and populate sidebar
+            function fetchWasteData() {
+                fetch('map.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        wasteData = data.features;
+                        updateSidebarItems();
+                    })
+                    .catch(error => console.error('Error fetching waste data:', error));
+            }
+            
+            // Update sidebar items based on the active filters
+            function updateSidebarItems() {
+                if (!wasteData.length) return;
+                
+                // Clear the container
+                wasteItemsContainer.innerHTML = '';
+                
+                // Filter waste data based on active filters
+                const filteredWaste = activeFilters.size === 0 
+                    ? wasteData 
+                    : wasteData.filter(item => activeFilters.has(item.properties.category));
+                
+                // Create and append waste items
+                filteredWaste.forEach(item => {
+                    const wasteItem = document.createElement('div');
+                    wasteItem.className = 'waste-item';
+                    wasteItem.dataset.id = item.id;
+                    
+                    const categoryColor = getCategoryColor(item.properties.category);
+                    
+                    // Create image HTML (with fallback for missing images)
+                    let imageHtml;
+                    if (item.properties.imageUrl) {
+                        imageHtml = `<div class="waste-image-container">
+                            <img src="${item.properties.imageUrl}" alt="${item.properties.name}" class="waste-thumbnail" />
+                        </div>`;
+                    } else {
+                        // Fallback image - using category color as background
+                        imageHtml = `<div class="waste-image-container no-image" style="background-color: ${categoryColor}33;">
+                            <div class="no-image-placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${categoryColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                            </div>
+                        </div>`;
+                    }
+                    
+                    wasteItem.innerHTML = `
+                        <div class="waste-item-content">
+                            ${imageHtml}
+                            <div class="waste-item-text">
+                                <div class="waste-item-header">
+                                    <span class="waste-color-indicator" style="background-color: ${categoryColor};"></span>
+                                    <span class="waste-name">${item.properties.name}</span>
+                                </div>
+                                <div class="waste-location">${item.properties.location}</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Add click event to show detail view
+                    wasteItem.addEventListener('click', () => {
+                        // Remove active class from all items
+                        document.querySelectorAll('.waste-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        
+                        // Add active class to clicked item
+                        wasteItem.classList.add('active');
+                        
+                        // Show detail view for this item
+                        showDetailView(item);
+                        
+                        // Fly to the item's location on the map
+                        const map = window.mapInstance;
+                        if (map) {
+                            map.flyTo({
+                                center: item.geometry.coordinates,
+                                zoom: 5,
+                                essential: true
+                            });
+                        }
+                    });
+                    
+                    wasteItemsContainer.appendChild(wasteItem);
+                });
+                
+                // If sidebar is collapsed, expand it when there are items
+                if (filteredWaste.length > 0 && sidebar.classList.contains('collapsed')) {
+                    sidebar.classList.remove('collapsed');
+                    const arrow = sidebarToggle.querySelector('svg');
+                    arrow.innerHTML = '<polyline points="15 18 9 12 15 6"></polyline>';
+                }
+            }
+            
+            // Get color for a given category
+            function getCategoryColor(category) {
+                const colorMap = {
+                    'commercial': '#FF5733',
+                    'domestic': '#33FF57',
+                    'construction': '#3357FF',
+                    'agricultural': '#F3FF33',
+                    'industrial': '#FF33F3'
+                };
+                
+                return colorMap[category] || '#ffffff';
+            }
+            
+            // Initialize sidebar when map is loaded
+            window.addEventListener('load', () => {
+                fetchWasteData();
+            });
+            
+            // Map click handler for waste points
+            function handleWasteClick(feature) {
+                // Find and activate the corresponding sidebar item
+                const wasteItems = document.querySelectorAll('.waste-item');
+                wasteItems.forEach(item => {
+                    if (item.dataset.id === feature.id.toString()) {
+                        item.click();
+                    }
+                });
+                
+                // Open sidebar if collapsed
+                if (sidebar.classList.contains('collapsed')) {
+                    sidebar.classList.remove('collapsed');
+                    const arrow = sidebarToggle.querySelector('svg');
+                    arrow.innerHTML = '<polyline points="15 18 9 12 15 6"></polyline>';
+                }
+            }
+            
+            // Make the handleWasteClick function globally available
+            window.handleWasteClick = handleWasteClick;
+            
+            // Submit dialog functionality
+            const submitButton = document.getElementById('submit-button');
+            const submitDialog = document.getElementById('submit-dialog');
+            const closeDialogButton = document.getElementById('close-dialog');
+            
+            // Open dialog when submit button is clicked
+            if (submitButton && submitDialog) {
+                submitButton.addEventListener('click', () => {
+                    submitDialog.showModal();
+                });
+            }
+            
+            // Close dialog when the cancel button is clicked
+            if (closeDialogButton && submitDialog) {
+                closeDialogButton.addEventListener('click', () => {
+                    submitDialog.close();
+                });
+            }
+            
+            // Also close dialog when clicking outside (on the backdrop)
+            if (submitDialog) {
+                submitDialog.addEventListener('click', (e) => {
+                    const dialogDimensions = submitDialog.getBoundingClientRect();
+                    if (
+                        e.clientX < dialogDimensions.left ||
+                        e.clientX > dialogDimensions.right ||
+                        e.clientY < dialogDimensions.top ||
+                        e.clientY > dialogDimensions.bottom
+                    ) {
+                        submitDialog.close();
+                    }
+                });
+            }
         </script>
     </body>
 </html>
