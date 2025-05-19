@@ -12,6 +12,9 @@
   "dependencies": {
     "@astrojs/node": "^9.2.1",
     "@directus/sdk": "^19.1.0",
+    "@nozbe/microfuzz": "^1.0.0",
+    "@turf/turf": "^7.2.0",
+    "@types/geojson": "^7946.0.16",
     "astro": "^5.7.4",
     "maplibre-gl": "^5.3.1"
   }

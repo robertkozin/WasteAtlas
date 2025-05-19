@@ -5,7 +5,7 @@ import { readItems } from "@directus/sdk";
 export async function GET({params, request}: APIContext) {
     const waste = await directus.request(
         readItems("waste", {
-            fields: ["id", "name", "location", "point", "category", "slug", "image.*"],
+            fields: ["id", "name", "location", "point", "category", "slug", "image"],
             filter: {}
         })
     )

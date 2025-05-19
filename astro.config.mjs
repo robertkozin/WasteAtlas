@@ -43,5 +43,13 @@ export default defineConfig({
 
     adapter: node({
         mode: "standalone"
-    })
+    }),
+
+    vite: {
+        build: {
+          minify: false,
+          cssMinify: false,
+        },
+      },
+    compressHTML: false,
 });

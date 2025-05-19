@@ -1,5 +1,6 @@
 import { createDirectus, rest, staticToken, withToken } from '@directus/sdk';
 import type { DirectusFile } from '@directus/sdk'
+import type { GeoJsonObject } from 'geojson';
 
 type Waste = {
   id: number;
@@ -11,7 +12,8 @@ type Waste = {
   characteristics?: string;
   image?: DirectusFile;
   description?: string;
-  point?: Point;
+  point?: GeoJSON.Point;
+  outline?: GeoJSON.Polygon;
   submitted_on?: string;
   projects?: Project[];
   submitters?: Submitter[];
@@ -23,11 +25,6 @@ type Project = {
 
 type Submitter = {
 
-}
-
-type Point = {
-  type: string;
-  coordinates: number[];
 }
 
 type Schema = {
