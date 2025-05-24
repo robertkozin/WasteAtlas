@@ -3,6 +3,8 @@ import { defineConfig, fontProviders, envField } from 'astro/config';
 
 import node from "@astrojs/node";
 
+import tailwindcss from "@tailwindcss/vite";
+
 // https://astro.build/config
 export default defineConfig({
     env: {
@@ -46,10 +48,12 @@ export default defineConfig({
     }),
 
     vite: {
-        build: {
-          minify: false,
-          cssMinify: false,
-        },
+      build: {
+        minify: false,
+        cssMinify: false,
       },
+
+      plugins: [tailwindcss()],
+    },
     compressHTML: false,
 });

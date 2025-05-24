@@ -2,13 +2,15 @@
 import directus from "../../lib/directus";
 import { readItems } from "@directus/sdk";
 import { Font } from "astro:assets";
+import "./src/styles/global.css";
 
 export async function getStaticPaths() {
   const waste = await directus.request(
     readItems("waste", {
-      fields: ["*"],
+      fields: ["*", { projects: ["*"] }],
     }),
   );
+
   return waste
     .filter((waste) => !!waste.slug)
     .map((waste) => ({
@@ -30,8 +32,14 @@ const waste = Astro.props;
     <title>TODO:</title>
     <Font cssVariable="--font-switzer" preload />
     <Font cssVariable="--font-erode" preload />
+    <link rel="stylesheet" href="/reset.css" />
 
     <style>
+      html,
+      body {
+        height: 100%;
+      }
+
       h1 {
         font-family: var(--font-switzer);
         font-size: 100px;
@@ -75,7 +83,7 @@ const waste = Astro.props;
       }
 
       .banner span {
-        padding-left: .8ch;
+        padding-left: 0.8ch;
         animation-duration: 15s;
         animation-iteration-count: infinite;
         animation-name: marquee-content;
@@ -91,13 +99,64 @@ const waste = Astro.props;
           transform: translateX(-100%);
         }
       }
+
+      .projects {
+        padding: 40px;
+        background-color: #9caf88;
+        overflow-x: auto;
+        overflow-y: hidden;
+      }
+
+      .project {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        border-radius: 20px;
+        height: 200px;
+      }
     </style>
   </head>
   <body>
+    <nav>
+      <button>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-left"
+          ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+            d="M5 12l14 0"></path><path d="M5 12l4 4"></path><path
+            d="M5 12l4 -4"></path></svg
+        >
+      </button>
+    </nav>
     <main>
-      <h1>{waste.name}</h1>
-      <h2>{waste.location}</h2>
-      <p>{waste.description}</p>
+      <section class="flex flex-row">
+        <div>
+          <h1>{waste.name}</h1>
+          <h2>{waste.location}</h2>
+          <p>{waste.description}</p>
+        </div>
+
+        <div>
+          <img src={`${import.meta.env.DIRECTUS_URL}/assets/${waste.image}`} />
+        </div>
+      </section>
+
+      <section class="projects">
+        {
+          waste.projects?.map((project) => {
+            return <div class="project">{project.name}</div>;
+          })
+        }
+      </section>
+
       <div class="banner">
         <span>{waste.characteristics}</span><span>{waste.characteristics}</span>
       </div>

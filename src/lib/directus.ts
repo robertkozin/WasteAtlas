@@ -12,7 +12,7 @@ type Waste = {
   characteristics?: string;
   image?: DirectusFile;
   description?: string;
-  point?: GeoJSON.Point;
+  point?: GeoJSON.Geometry;
   outline?: GeoJSON.Polygon;
   submitted_on?: string;
   projects?: Project[];
@@ -20,7 +20,11 @@ type Waste = {
 }
 
 type Project = {
-
+  id: number;
+  status: string;
+  name: string;
+  description?: string;
+  images?: DirectusFile[];
 }
 
 type Submitter = {

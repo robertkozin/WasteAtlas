@@ -14,8 +14,57 @@ import {
     explode,
     sample,
     buffer,
+    polygonToLine,
+    lineChunk,
+    randomPosition,
+    point,
 } from "@turf/turf";
+
 import HeatmapControls from "../components/HeatmapControls.astro";
+import type {
+    Geometry,
+    Point,
+    Polygon,
+    GeometryCollection,
+    GeoJSON,
+} from "geojson";
+
+function isPoint(geometry: Geometry): geometry is Point {
+    return geometry.type === "Point";
+}
+
+function isGeometryCollection(
+    geometry: Geometry,
+): geometry is GeometryCollection {
+    return geometry.type === "GeometryCollection";
+}
+
+function isPolygon(geometry: Geometry): geometry is Polygon {
+    return geometry.type === "Polygon";
+}
+
+function findPoint(geo: Geometry): Point | undefined {
+    if (isPoint(geo)) {
+        return geo;
+    } else if (isGeometryCollection(geo)) {
+        let point = geo.geometries.find(isPoint);
+        if (point) return point;
+    }
+}
+
+function findPolygon(geo: Geometry): Polygon | undefined {
+    if (isPolygon(geo)) {
+        return geo;
+    } else if (isGeometryCollection(geo)) {
+        let poly = geo.geometries.find(isPolygon);
+        if (poly) return poly;
+    }
+}
+
+function onlyCoords(geo?: GeoJSON): number[] {
+    if (!geo) return [];
+    return coordReduce(geo, (acc, curr) => acc.concat(curr), [] as number[]);
+}
 
 const waste = await directus
     .request(
@@ -37,27 +86,53 @@ const waste = await directus
     )
     .then((waste) => {
         return waste.map((waste) => {
-            let blob: number[] = [];
-            if (waste.outline) {
-                let smooth = polygonSmooth(waste.outline)
+            let point = waste.point
+                ? onlyCoords(findPoint(waste.point))
+                : randomPosition([
+                      -56.678467, 20.231275, -25.389404, 40.522151,
+                  ]);
+            let blob = waste.point ? onlyCoords(findPolygon(waste.point)) : [];
 
-                let blobGeo = pointGrid(bbox(waste.outline), 10, {
-                    mask: smooth.features[0],
-                });
+            let cat = waste.category;
+            let colour =
+                cat === "domestic"
+                    ? "#9967CA"
+                    : cat === "commercial"
+                      ? "#FC4008"
+                      : cat === "agricultural"
+                        ? "#979C35"
+                        : cat === "industrial"
+                          ? "A1A1A1"
+                          : "pink";
 
-                let exp = explode(smooth)
+            // let blob: number[] = [];
+            // if (waste.outline) {
+            //     let smooth = polygonSmooth(waste.outline, { iterations: 3 });
 
-                blobGeo.features.push(...sample(exp, Math.floor(exp.features.length/2)).features)
-                blob = coordReduce(
-                    blobGeo,
-                    (acc: number[], curr: number[]) => acc.concat(curr),
-                    [] as number[],
-                );
-            }
+            //     let blobGeo = pointGrid(bbox(waste.outline), 50, {
+            //         mask: smooth.features[0],
+            //     });
 
-            let point = waste.point?.coordinates || [-41, 35];
+            //     // buffer the polygon
 
-            return { ...waste, blob, point };
+            //     let exp = explode(
+            //         lineChunk(polygonToLine(smooth.features[0]), 50),
+            //     );
+
+            //     blobGeo.features.push(
+            //         ...sample(exp, Math.floor(exp.features.length / 1.2))
+            //             .features,
+            //     );
+            //     blob = coordReduce(
+            //         blobGeo,
+            //         (acc: number[], curr: number[]) => acc.concat(curr),
+            //         [] as number[],
+            //     );
+            // }
+
+            // let point = waste.point?.coordinates || [-41, 35];
+
+            return { ...waste, blob, point, colour };
         });
     });
 ---
@@ -109,7 +184,7 @@ const waste = await directus
                 top: 10px;
                 left: 10px;
                 padding: 10px 20px;
-                max-width: 580px;
+                max-width: 564px;
                 border-radius: 30px;
                 transition: display 1s;
             }
@@ -122,22 +197,16 @@ const waste = await directus
 
             .title-area button {
                 position: absolute;
-                right: -10px;
-                bottom: -10px;
+                right: -20px;
+                bottom: -20px;
                 border-radius: 100px;
                 width: 30px;
                 height: 30px;
-                text-align: center;
-                vertical-align: middle;
                 font-size: 32px;
                 display: flex;
+                outline: none;
                 align-items: center;
                 justify-content: center;
-                transform: rotate(180deg) translateY(-2px);
-            }
-
-            .title-area.open button {
-                transform: rotate(0deg);
             }
 
             .title-area.open section {
@@ -288,9 +357,9 @@ const waste = await directus
             }
 
             .panel {
-                background-color: rgba(217, 217, 217, 0.65);
-                border: 1px solid #747474;
-                color: black;
+                background-color: rgba(120, 124, 148, 0.8);
+                color: #ffffff;
+                border: none;
                 z-index: 1;
                 position: absolute;
                 backdrop-filter: blur(2px);
@@ -319,12 +388,12 @@ const waste = await directus
                 position: absolute;
                 top: 70px;
                 right: 10px;
-                border-radius: 20px;
-                padding: 12px 0 12px 12px;
+                border-radius: 30px;
+                /* padding: 0 0 0 12px; */
             }
 
             .list ul::-webkit-scrollbar-thumb {
-                background-color: #827c7c;
+                background-color: #d9d9d9;
                 border: 4px solid transparent;
                 border-radius: 8px;
                 background-clip: padding-box;
@@ -336,13 +405,12 @@ const waste = await directus
 
             .list ul {
                 height: 500px;
-                padding: 10px;
 
                 display: flex;
                 flex-direction: column;
                 gap: 5px;
                 list-style: none;
-                padding: 0;
+                padding: 10px 0 10px 0;
                 margin: 0;
                 overflow-y: scroll;
             }
@@ -357,8 +425,8 @@ const waste = await directus
 
             .list .item {
                 background-color: #d9d9d9;
-                border-radius: 15px;
-                padding: 10px;
+                border-radius: 30px;
+                padding: 12px 16px;
                 list-style-type: none;
                 display: flex;
                 gap: 10px;
@@ -370,8 +438,8 @@ const waste = await directus
 
             .list button {
                 position: absolute;
-                left: -10px;
-                top: -10px;
+                left: -20px;
+                top: -20px;
                 border-radius: 100px;
                 width: 30px;
                 height: 30px;
@@ -382,6 +450,12 @@ const waste = await directus
                 align-items: center;
                 justify-content: center;
                 transform: rotate(180deg) translateY(-2px);
+            }
+
+            .list ul img::before {
+                outline: none;
+                border: none;
+                content: "";
             }
 
             .search {
@@ -402,22 +476,7 @@ const waste = await directus
     <body>
         <header class="title-area panel">
             <h1>Waste Atlas</h1>
-            <button class="panel" data-open=".title-area">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon"
-                    ><path stroke="none" d="M0 0h24v24H0z" fill="none"
-                    ></path><path d="M6 15l6 -6l6 6"></path></svg
-                >
-            </button>
+            <button class="panel" data-open=".title-area"> </button>
             <section>
                 <p>
                     As designers, wouldn't it be amazing to visualize what
@@ -431,7 +490,7 @@ const waste = await directus
             </section>
         </header>
 
-        <button class="panel submit" id="submit-button">
+        <button class="panel submit" id="submit-button" data-open="#submit-dialog">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="26"
@@ -467,22 +526,8 @@ const waste = await directus
         <input class="search panel" role="searchbox" placeholder="Search" />
 
         <section class="list panel">
-            <button class="panel" data-open=".list"
-                ><svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon"
-                    ><path stroke="none" d="M0 0h24v24H0z" fill="none"
-                    ></path><path d="M15 6l-6 6l6 6"></path></svg
-                ></button
-            >
+            <button class="panel" data-open=".list">+</button>
+            <div style="overflow: hidden; padding-left: 12px; border-radius: 30px;">
             <ul>
                 {
                     waste.map((w) => (
@@ -505,19 +550,23 @@ const waste = await directus
                             <div>
                                 <img
                                     src={`${import.meta.env.DIRECTUS_URL}/assets/${w.image}?width=200&height=200&fit=cover`}
-                                    width="50"
-                                    height="50"
+                                    width="67"
+                                    height="67"
+                                    style={`background-color: ${w.colour}`}
                                 />
                             </div>
                             <div class="desc">
-                                {w.name}
-                                <br />
-                                {w.location}
+                                <a href={`/waste/${w.slug}`}>
+                                    {w.name}
+                                    <br />
+                                    {w.location}
+                                </a>
                             </div>
                         </li>
                     ))
                 }
             </ul>
+            </div>
         </section>
 
         <div class="filter panel">
@@ -542,7 +591,7 @@ const waste = await directus
             </div>
         </div>
 
-        <HeatmapControls />
+        <!-- <HeatmapControls /> -->
         <div id="map"></div>
 
         <script>
@@ -563,6 +612,7 @@ const waste = await directus
                     let targetEl = document.querySelector(el.dataset.open);
 
                     el.addEventListener("click", (ev) => {
+                        if (targetEl?.tagName === "DIALOG") targetEl.show();
                         targetEl.classList.toggle("open");
                     });
                 });
@@ -572,6 +622,26 @@ const waste = await directus
             import maplibre from "maplibre-gl";
             import "maplibre-gl/dist/maplibre-gl.css";
             import createFuzzySearch from "@nozbe/microfuzz";
+
+            import {
+                randomPoint,
+                bbox,
+                coordReduce,
+                pointsWithinPolygon,
+                pointGrid,
+                polygonSmooth,
+                feature,
+                explode,
+                sample,
+                buffer,
+                polygonToLine,
+                lineChunk,
+                randomPosition,
+                point,
+                polygon,
+            } from "@turf/turf";
+
+            import type {Polygon, Position, Point} from "geojson"
 
             // Add types for the global window object
             declare global {
@@ -607,6 +677,14 @@ const waste = await directus
                 return args;
             };
 
+            function coordsToPositions(coords: number[]): Position[][] {
+                const positions: Position[] = [];
+                for (let i = 0; i < coords.length; i += 2) {
+                    positions.push([coords[i], coords[i + 1]]);
+                }
+                return [positions];
+            }
+
             function wasteGeoJSON(): GeoJSON.FeatureCollection<GeoJSON.Point> {
                 const features = document
                     .querySelectorAll<HTMLElement>(".list .item")
@@ -634,27 +712,58 @@ const waste = await directus
             }
 
             function blobGeoJSON(): GeoJSON.FeatureCollection<GeoJSON.Point> {
+                // let blob: number[] = [];
+                // if (waste.outline) {
+                //     let smooth = polygonSmooth(waste.outline, { iterations: 3 });
+
+                //     let blobGeo = pointGrid(bbox(waste.outline), 50, {
+                //         mask: smooth.features[0],
+                //     });
+
+                //     // buffer the polygon
+
+                //     let exp = explode(
+                //         lineChunk(polygonToLine(smooth.features[0]), 50),
+                //     );
+
+                //     blobGeo.features.push(
+                //         ...sample(exp, Math.floor(exp.features.length / 1.2))
+                //             .features,
+                //     );
+                //     blob = coordReduce(
+                //         blobGeo,
+                //         (acc: number[], curr: number[]) => acc.concat(curr),
+                //         [] as number[],
+                //     );
+                // }
+
+                // let point = waste.point?.coordinates || [-41, 35];
+
+                function isEmpty(str?: string): str is string {
+                    return !str || str.length === 0;
+                }
+
                 const features = document
                     .querySelectorAll<HTMLElement>(".list .item")
                     .values()
-                    .filter((waste) => !!waste.dataset.blob)
+                    .filter((waste) => !isEmpty(waste.dataset.blob))
                     .flatMap((waste) => {
-                        let blob = waste.dataset.blob
+                        let outlineCoords = waste.dataset.blob
                             .split(" ")
                             .map(parseFloat);
                         let p: any[] = [];
+                        let outline = polygon(coordsToPositions(outlineCoords));
+                        let smooth = polygonSmooth(outline, {iterations: 3})
+                        let smoothBbox = bbox(smooth)
 
-                        for (let i = 0, n = blob.length; i < n; i += 2) {
-                            p.push({
-                                type: "Feature",
-                                geometry: {
-                                    type: "Point",
-                                    coordinates: [blob[i], blob[i + 1]],
-                                },
-                                properties: {},
-                            });
-                        }
-                        return p;
+                        let smoothGrid = pointGrid(smoothBbox, 10, {
+                            mask: smooth.features[0]
+                        })
+                        let smoothOutlinePoints = explode(lineChunk(polygonToLine(smooth.features[0]), 10))
+
+                        smoothGrid.features.push(...smoothOutlinePoints.features)
+
+                        return smoothGrid.features
                     });
                 return {
                     type: "FeatureCollection",
@@ -701,27 +810,34 @@ const waste = await directus
                             190,
                         ],
                         "heatmap-intensity": 1,
-                        'heatmap-opacity': [
-                            'interpolate',
-                            ['linear'],
-                            ['zoom'],
+                        "heatmap-opacity": [
+                            "interpolate",
+                            ["linear"],
+                            ["zoom"],
                             7,
-                            1,
-                            9,
-                            .1
+                            .6,
+                            8,
+                            0.1,
                         ],
                         "heatmap-color": [
                             "interpolate",
                             ["linear"],
                             ["heatmap-density"],
-                            0,"rgba(255, 0, 0, 0)",
-                            0.2,"rgba(255, 0, 0, 0)",
-                            0.5,"rgba(255, 0, 0, 0)",
-                            0.6,"rgba(255, 0, 0, 0)",
-                            0.7,"rgba(255, 0, 0, 1)",
-                            1,"rgba(255, 0, 0, 1)"]
+                            0,
+                            "rgba(255, 0, 0, 0)",
+                            0.2,
+                            "rgba(255, 0, 0, 0)",
+                            0.4,
+                            "rgba(255, 0, 0, 0)",
+                            0.5,
+                            "rgba(255, 0, 0, 0)",
+                            0.7,
+                            "rgba(255, 0, 0, 1)",
+                            1,
+                            "rgba(255, 0, 0, 1)",
+                        ],
                     },
-                });
+                }, "boundary_country_inner");
 
                 map.addLayer({
                     id: "waste",
@@ -752,14 +868,14 @@ const waste = await directus
                             "#A1A1A1", // Grey
                             "#ffffff", // Default color for any other category
                         ],
-                        'circle-opacity': [
-                            'interpolate',
-                            ['linear'],
-                            ['zoom'],
+                        "circle-opacity": [
+                            "interpolate",
+                            ["linear"],
+                            ["zoom"],
                             7,
-                            .1,
+                            0.1,
                             9,
-                            1
+                            1,
                         ],
                         // "circle-stroke-color": [
                         //     "match",
