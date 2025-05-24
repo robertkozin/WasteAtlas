@@ -147,7 +147,7 @@ const waste = await directus
         <Font cssVariable="--font-switzer" preload />
         <Font cssVariable="--font-erode" preload />
         <link rel="stylesheet" href="/reset.css" />
-        <style>
+        <style is:global>
             .icon {
                 vertical-align: -0.2em;
                 width: 1em;
@@ -620,7 +620,9 @@ const waste = await directus
 
         <script>
             import maplibre from "maplibre-gl";
+            //import maplibre from "mapbox-gl";
             import "maplibre-gl/dist/maplibre-gl.css";
+            //import "mapbox-gl/dist/mapbox-gl.css";
             import createFuzzySearch from "@nozbe/microfuzz";
 
             import {
@@ -639,6 +641,7 @@ const waste = await directus
                 randomPosition,
                 point,
                 polygon,
+                propEach,
             } from "@turf/turf";
 
             import type {Polygon, Position, Point} from "geojson"
@@ -650,10 +653,12 @@ const waste = await directus
                 }
             }
 
+            maplibre.accessToken = 'pk.eyJ1Ijoicm9iZXJ0a296aW4iLCJhIjoiY205aXVteWgyMDY0dDJsczZqNGtpbzJqNSJ9.sHenifCidutvMSNZquNWdA'
             const map = new maplibre.Map({
                 container: "map",
                 //style: "https://api.maptiler.com/maps/dataviz/style.json?key=bLo8xe0MLrejy29a8JsL",
-                style: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+                // style: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+                style: "/map/stylev4.json",
                 center: [0, 40],
                 zoom: 1.3,
                 maxZoom: 9,
@@ -751,8 +756,8 @@ const waste = await directus
                         let outlineCoords = waste.dataset.blob
                             .split(" ")
                             .map(parseFloat);
-                        let p: any[] = [];
-                        let outline = polygon(coordsToPositions(outlineCoords));
+                        let props = {cat: waste.dataset.cat, w: waste.dataset.id}
+                        let outline = polygon<typeof props>(coordsToPositions(outlineCoords), props);
                         let smooth = polygonSmooth(outline, {iterations: 3})
                         let smoothBbox = bbox(smooth)
 
@@ -763,6 +768,9 @@ const waste = await directus
 
                         smoothGrid.features.push(...smoothOutlinePoints.features)
 
+                        smoothGrid.features.forEach(f => {
+                            f.properties = props
+                        })
                         return smoothGrid.features
                     });
                 return {
@@ -795,12 +803,7 @@ const waste = await directus
                 //     map.addImage("recycle", image.data),
                 // );
 
-                map.addLayer({
-                    id: "blobs-heat",
-                    type: "heatmap",
-                    source: "blobs",
-                    paint: {
-                        "heatmap-radius": [
+                let rad: maplibre.DataDrivenPropertyValueSpecification<number> = [
                             "interpolate",
                             ["exponential", 2],
                             ["zoom"],
@@ -808,9 +811,9 @@ const waste = await directus
                             6,
                             8.9,
                             190,
-                        ],
-                        "heatmap-intensity": 1,
-                        "heatmap-opacity": [
+                        ];
+                    
+                let opacity: maplibre.DataDrivenPropertyValueSpecification<number> = [
                             "interpolate",
                             ["linear"],
                             ["zoom"],
@@ -818,26 +821,91 @@ const waste = await directus
                             .6,
                             8,
                             0.1,
-                        ],
-                        "heatmap-color": [
+                        ];
+                
+                function color(hex: string): maplibre.ExpressionSpecification {
+                    return [
                             "interpolate",
                             ["linear"],
                             ["heatmap-density"],
                             0,
-                            "rgba(255, 0, 0, 0)",
-                            0.2,
-                            "rgba(255, 0, 0, 0)",
-                            0.4,
-                            "rgba(255, 0, 0, 0)",
-                            0.5,
-                            "rgba(255, 0, 0, 0)",
+                            hexa(hex, 0),
+                            0.6,
+                            hexa(hex, 0),
                             0.7,
-                            "rgba(255, 0, 0, 1)",
+                            hexa(hex, 1),
                             1,
-                            "rgba(255, 0, 0, 1)",
-                        ],
+                            hexa(hex, 1),
+                        ];
+                }
+
+                function hexa(hex: string, alpha: number = 1): string {
+                    return hex + (Math.round(alpha * 255).toString(16).padStart(2, '0'))
+                }
+
+                // "domestic",
+                //             "#9967CA", // Purple
+                //             "construction",
+                //             "#FC4008", // Red
+                //             "commercial",
+                //             "#FC4008", // Red
+                //             "agricultural",
+                //             "#979C35", // Green
+                //             "industrial",
+                //             "#A1A1A1", // Grey
+                //             "#ffffff", // Default color for any other category
+
+                map.addLayer({
+                    id: "heatmap_domestic",
+                    type: "heatmap",
+                    source: "blobs",
+                    filter: ["==", ["get", "cat"], "domestic"],
+                    paint: {
+                        "heatmap-radius": rad,
+                        "heatmap-intensity": 1,
+                        "heatmap-opacity": opacity,
+                        "heatmap-color": color("#9967CA"),
                     },
-                }, "boundary_country_inner");
+                }, "place_other");
+
+                map.addLayer({
+                    id: "heatmap_construction",
+                    type: "heatmap",
+                    source: "blobs",
+                    filter: ["in", ["get", "cat"], ["literal", ["commercial", "consutrction"]]],
+                    paint: {
+                        "heatmap-radius": rad,
+                        "heatmap-intensity": 1,
+                        "heatmap-opacity": opacity,
+                        "heatmap-color": color("#FC4008"),
+                    },
+                }, "place_other");
+
+                map.addLayer({
+                    id: "heatmap_agricultural",
+                    type: "heatmap",
+                    source: "blobs",
+                    filter: ["==", ["get", "cat"], "agricultural"],
+                    paint: {
+                        "heatmap-radius": rad,
+                        "heatmap-intensity": 1,
+                        "heatmap-opacity": opacity,
+                        "heatmap-color": color("#979C35"),
+                    },
+                }, "place_other");
+
+                map.addLayer({
+                    id: "heatmap_industrial",
+                    type: "heatmap",
+                    source: "blobs",
+                    filter: ["==", ["get", "cat"], "industrial"],
+                    paint: {
+                        "heatmap-radius": rad,
+                        "heatmap-intensity": 1,
+                        "heatmap-opacity": opacity,
+                        "heatmap-color": color("#A1A1A1"),
+                    },
+                }, "place_other");
 
                 map.addLayer({
                     id: "waste",
@@ -849,9 +917,9 @@ const waste = await directus
                             ["linear"],
                             ["zoom"],
                             0,
-                            0,
+                            2,
                             20,
-                            20,
+                            15,
                         ],
                         "circle-color": [
                             "match",
@@ -868,15 +936,16 @@ const waste = await directus
                             "#A1A1A1", // Grey
                             "#ffffff", // Default color for any other category
                         ],
-                        "circle-opacity": [
-                            "interpolate",
-                            ["linear"],
-                            ["zoom"],
-                            7,
-                            0.1,
-                            9,
-                            1,
-                        ],
+                        "circle-opacity": 1
+                        // [
+                        //     "interpolate",
+                        //     ["linear"],
+                        //     ["zoom"],
+                        //     7,
+                        //     0.1,
+                        //     9,
+                        //     1,
+                        // ],
                         // "circle-stroke-color": [
                         //     "match",
                         //     ["get", "category"],
@@ -929,6 +998,10 @@ ${props.category}<br/>`;
                 map.on("mouseleave", "waste", () => {
                     map.getCanvas().style.cursor = "";
                 });
+
+                map.on("click", "blobs", (e) => {
+                    console.log(e);
+                })
             });
 
             const fuzzySearch = createFuzzySearch(
