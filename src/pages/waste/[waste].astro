@@ -2,7 +2,7 @@
 import directus from "../../lib/directus";
 import { readItems } from "@directus/sdk";
 import { Font } from "astro:assets";
-import "./src/styles/global.css";
+import "../../styles/global.css";
 
 export async function getStaticPaths() {
   const waste = await directus.request(
