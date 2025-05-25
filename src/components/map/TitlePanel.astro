@@ -1,0 +1,68 @@
+---
+
+---
+
+<style is:global>
+  .title-area {
+    top: 10px;
+    left: 10px;
+    padding: 10px 20px;
+    max-width: 564px;
+    border-radius: 30px;
+    transition: display 1s;
+  }
+
+  .title-area h1 {
+    text-transform: uppercase;
+    font-size: 32px;
+    font-weight: 500;
+  }
+
+  .title-area button {
+    position: absolute;
+    right: -20px;
+    bottom: -20px;
+    border-radius: 100px;
+    width: 30px;
+    height: 30px;
+    font-size: 32px;
+    display: flex;
+    outline: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .title-area.open section {
+    display: block;
+    /* max-height: 105px;
+                max-width: 580px;
+                overflow: hidden;
+                transition:
+                    max-width 1s ease-in-out 0s,
+                    max-height 1s ease-in-out 1s; */
+  }
+
+  .title-area:not(.open) section {
+    display: none;
+    /* max-height: 0;
+                max-width: 0;
+                overflow: hidden;
+                transition:
+                    max-height 1s ease-in-out 0s,
+                    max-width 1s ease-in-out 1s; */
+  }
+</style>
+
+<header class="title-area panel">
+  <h1>Waste Atlas</h1>
+  <button class="panel" data-open=".title-area"> </button>
+  <section>
+    <p>
+      As designers, wouldn't it be amazing to visualize what unexplored, readily
+      accessible, cheap, local materials there are to work with? Through this
+      open-source database we're trying to highlight the potential of local
+      waste as new material. We want to map the waste and classify it so that it
+      finds a home; so that we start blurring the lines of what waste truly is.
+    </p>
+  </section>
+</header>
