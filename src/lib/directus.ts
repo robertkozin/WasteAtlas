@@ -15,8 +15,14 @@ type Waste = {
   point?: GeoJSON.Geometry;
   outline?: GeoJSON.Polygon;
   submitted_on?: string;
-  projects?: Project[];
+  projects?: number[] | WasteProject[];
   submitters?: Submitter[];
+}
+
+type WasteProject = {
+  id: number;
+  waste_id: number | Waste;
+  project_id: number | Project;
 }
 
 type Project = {
@@ -34,7 +40,8 @@ type Submitter = {
 type Schema = {
   waste: Waste[];
   projects: Project[];
-  Submitters: Submitter[];
+  submitters: Submitter[];
+  waste_project: WasteProject[];
 }
 
 let directus = createDirectus<Schema>(import.meta.env.DIRECTUS_URL).with(rest())

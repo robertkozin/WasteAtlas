@@ -74,6 +74,7 @@ const waste = await directus
       ],
       filter: {},
       sort: ["name", "location"],
+      limit: 100,
     })
   )
   .then((waste) => {
