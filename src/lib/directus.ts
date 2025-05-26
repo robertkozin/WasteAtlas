@@ -1,50 +1,6 @@
-import { createDirectus, rest, staticToken, withToken } from '@directus/sdk';
-import type { DirectusFile } from '@directus/sdk'
-import type { GeoJsonObject } from 'geojson';
+import { createDirectus, rest, staticToken } from '@directus/sdk';
 
-type Waste = {
-  id: number;
-  status: string;
-  name: string;
-  location: string;
-  slug?: string;
-  category?: string;
-  characteristics?: string;
-  image?: DirectusFile;
-  description?: string;
-  point?: GeoJSON.Geometry;
-  outline?: GeoJSON.Polygon;
-  submitted_on?: string;
-  projects?: number[] | WasteProject[];
-  submitters?: Submitter[];
-}
-
-type WasteProject = {
-  id: number;
-  waste_id: number | Waste;
-  project_id: number | Project;
-}
-
-type Project = {
-  id: number;
-  status: string;
-  name: string;
-  description?: string;
-  images?: DirectusFile[];
-}
-
-type Submitter = {
-
-}
-
-type Schema = {
-  waste: Waste[];
-  projects: Project[];
-  submitters: Submitter[];
-  waste_project: WasteProject[];
-}
-
-let directus = createDirectus<Schema>(import.meta.env.DIRECTUS_URL).with(rest())
+let directus = createDirectus(import.meta.env.DIRECTUS_URL).with(rest())
 
 if (import.meta.env.DIRECTUS_TOKEN) {
   directus = directus.with(staticToken(import.meta.env.DIRECTUS_TOKEN))

@@ -13,104 +13,23 @@ import ContributePanel from "../components/map/ContributePanel.astro";
 import LayerPanel from "../components/map/LayerPanel.astro";
 import WastePanel from "../components/map/WastePanel.astro";
 
-import type {
-  Geometry,
-  Point,
-  Polygon,
-  GeometryCollection,
-  GeoJSON,
-} from "geojson";
+import Head from "../components/Head.astro";
 
-function isPoint(geometry: Geometry): geometry is Point {
-  return geometry.type === "Point";
-}
+import { findPoint, findPolygon, isGeometryCollection, isPoint, isPolygon, onlyCoords} from "../utils"
 
-function isGeometryCollection(
-  geometry: Geometry
-): geometry is GeometryCollection {
-  return geometry.type === "GeometryCollection";
-}
 
-function isPolygon(geometry: Geometry): geometry is Polygon {
-  return geometry.type === "Polygon";
-}
 
-function findPoint(geo: Geometry): Point | undefined {
-  if (isPoint(geo)) {
-    return geo;
-  } else if (isGeometryCollection(geo)) {
-    let point = geo.geometries.find(isPoint);
-    if (point) return point;
-  }
-}
+import { getCollection } from 'astro:content';
 
-function findPolygon(geo: Geometry): Polygon | undefined {
-  if (isPolygon(geo)) {
-    return geo;
-  } else if (isGeometryCollection(geo)) {
-    let poly = geo.geometries.find(isPolygon);
-    if (poly) return poly;
-  }
-}
 
-function onlyCoords(geo?: GeoJSON): number[] {
-  if (!geo) return [];
-  return coordReduce(geo, (acc, curr) => acc.concat(curr), [] as number[]);
-}
-
-const waste = await directus
-  .request(
-    readItems("waste", {
-      fields: [
-        "id",
-        "name",
-        "location",
-        "point",
-        "outline",
-        "category",
-        "slug",
-        "characteristics",
-        "image",
-      ],
-      filter: {},
-      sort: ["name", "location"],
-      limit: 100,
-    })
-  )
-  .then((waste) => {
-    return waste.map((waste, idx) => {
-      let point = waste.point
-        ? onlyCoords(findPoint(waste.point))
-        : randomPosition([-56.678467, 20.231275, -25.389404, 40.522151]);
-      let blob = waste.point ? onlyCoords(findPolygon(waste.point)) : [];
-
-      let cat = waste.category;
-      let colour =
-        cat === "domestic"
-          ? "#9967CA"
-          : cat === "commercial"
-            ? "#FC4008"
-            : cat === "agricultural"
-              ? "#979C35"
-              : cat === "industrial"
-                ? "A1A1A1"
-                : "pink";
-
-      return { ...waste, blob, point, colour, order: idx };
-    });
-  });
+const waste = await getCollection("waste").then(waste => waste.map(w => w.data))
 ---
 
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
     <!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
+    <Head/>
     <title>Waste Atlas</title>
-    <Font cssVariable="--font-switzer" preload />
-    <Font cssVariable="--font-erode" preload />
-    <link rel="stylesheet" href="/reset.css" />
     <style is:global>
       body {
         margin: 0;
@@ -508,22 +427,6 @@ const waste = await directus
           const feature = e.features[0];
           const props = feature.properties;
           const coordinates = feature.geometry.coordinates.slice();
-
-          // Fallback to popup if sidebar functionality isn't loaded yet
-          const description = `<a href="/waste/${props.slug}">${props.name} - ${props.location}</a><br/>
-${props.category}<br/>`;
-
-          // Ensure that if the map is zoomed out such that multiple
-          // copies of the feature are visible, the popup appears
-          // over the copy being pointed to.
-          while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-          }
-
-          new maplibre.Popup()
-            .setLngLat(coordinates)
-            .setHTML(description)
-            .addTo(map);
         });
 
         let heatLayers = [

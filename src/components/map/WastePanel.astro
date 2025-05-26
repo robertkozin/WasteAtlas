@@ -179,8 +179,8 @@ const { waste } = Astro.props;
               data-name={w.name}
               data-loc={w.location}
               data-char={w.characteristics}
-              data-coords={w.point.map((x) => x.toFixed(3)).join(" ")}
-              data-blob={w.blob.map((x) => x.toFixed(3)).join(" ")}
+              data-coords={w.point.flatMap(x => x).map((x) => x.toFixed(3)).join(" ")}
+              data-blob={w.blob.flatMap(x => x).map((x) => x.toFixed(3)).join(" ")}
               data-cat={w.category}
               data-order={w.order}
             >

@@ -1,8 +1,8 @@
 ---
 import directus from "../../lib/directus";
 import { readItems } from "@directus/sdk";
-import { Font } from "astro:assets";
-import "../../styles/global.css";
+
+import Head from "../../components/Head.astro";
 
 export async function getStaticPaths() {
   const waste = await directus.request(
@@ -11,7 +11,7 @@ export async function getStaticPaths() {
     })
   );
 
-  console.log(waste[0].projects, waste[0].projects[0], waste[0].projects[0].project_id.images);
+  // console.log(waste[0].projects, waste[0].projects[0], waste[0].projects[0].project_id.images);
 
   return waste
     .filter((waste) => !!waste.slug)
@@ -28,15 +28,9 @@ const waste = Astro.props;
 
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <title>TODO:</title>
-    <Font cssVariable="--font-switzer" preload />
-    <Font cssVariable="--font-erode" preload />
-    <!-- <link rel="stylesheet" href="/reset.css" /> -->
+
+    <Head/>
+    <title>{waste.name} - {waste.location}</title>
 
     <style is:global>
       html,
