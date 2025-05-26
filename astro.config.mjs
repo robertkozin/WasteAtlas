@@ -1,15 +1,14 @@
 // @ts-check
 import { defineConfig, fontProviders, envField } from "astro/config";
 
-import node from "@astrojs/node";
-
 import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://thewasteatlas.com",
-
   trailingSlash: "never",
+  output: "static",
+  compressHTML: false,
 
   env: {
     schema: {
@@ -57,17 +56,11 @@ export default defineConfig({
     ],
   },
 
-  adapter: node({
-    mode: "standalone",
-  }),
-
   vite: {
     build: {
       minify: false,
       cssMinify: false,
     },
-
     plugins: [tailwindcss()],
   },
-  compressHTML: false,
 });
