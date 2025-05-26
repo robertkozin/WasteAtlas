@@ -29,14 +29,20 @@ import { randomPosition } from "@turf/turf";
 //   waste.map((w) => w.data)
 // );
 
-// TODO: waste colors
-// TODO: click on map
+// TODO: waste colors X
+// TODO: click on map X
+// TODO: show only published waste
+// TODO: tooltip
+// TODO: click layer X
+
+const isProd = true
 
 const waste = await directus
   .request(
     readItems("waste", {
       fields: ["*"],
       //filter: { date_updated: { _gte: lastModified } },
+      filter: {status: isProd ? {"_nin": ["draft", "archived"]} : undefined},
       sort: ["name", "location"],
     })
   )
@@ -107,6 +113,39 @@ const waste = await directus
 
       [hidden] {
         display: none !important;
+      }
+
+      *[data-tooltip] {
+        position: relative;
+      }
+
+      *[data-tooltip]::after {
+        content: attr(data-tooltip);
+
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        width: 150px;
+
+        pointer-events: none;
+        opacity: 0;
+        -webkit-transition: opacity 0.15s ease-in-out;
+        -moz-transition: opacity 0.15s ease-in-out;
+        -ms-transition: opacity 0.15s ease-in-out;
+        -o-transition: opacity 0.15s ease-in-out;
+        transition: opacity 0.15s ease-in-out;
+
+        display: block;
+        font-size: 12px;
+        line-height: 16px;
+        background: #fefdcd;
+        padding: 2px 2px;
+        border: 1px solid #c0c0c0;
+        box-shadow: 2px 4px 5px rgba(0, 0, 0, 0.4);
+      }
+
+      *[data-tooltip]:hover::after {
+        opacity: 1;
       }
     </style>
   </head>
@@ -199,7 +238,7 @@ const waste = await directus
       window.mapInstance = map;
 
       let a = (args) => {
-        console.log(args);
+        //console.log(args);
         return args;
       };
 
@@ -280,6 +319,15 @@ const waste = await directus
           $titlearea.classList.remove("open");
         }
       });
+
+      let heatLayers = [
+        "heatmap_construction",
+        "heatmap_agricultural",
+        "heatmap_domestic",
+        "heatmap_industrial",
+      ];
+
+      map.setStyle;
 
       map.on("load", () => {
         //map.setProjection({type: "globe"})
@@ -374,11 +422,7 @@ const waste = await directus
             id: "heatmap_construction",
             type: "heatmap",
             source: "blobs",
-            filter: [
-              "in",
-              ["get", "cat"],
-              ["literal", ["commercial", "construction"]],
-            ],
+            filter: ["==", ["get", "cat"], "construction"],
             paint: {
               "heatmap-radius": rad,
               "heatmap-intensity": 1,
@@ -421,6 +465,8 @@ const waste = await directus
           "place_village"
         );
 
+        map.setPaintProperty;
+
         map.addLayer({
           id: "waste",
           type: "circle",
@@ -460,13 +506,6 @@ const waste = await directus
           const coordinates = feature.geometry.coordinates.slice();
         });
 
-        let heatLayers = [
-          "heatmap_construction",
-          "heatmap_agricultural",
-          "heatmap_domestic",
-          "heatmap_industrial",
-        ];
-
         map.on("mouseenter", heatLayers, () => {
           map.getCanvas().style.cursor = "pointer";
         });
@@ -475,13 +514,52 @@ const waste = await directus
           map.getCanvas().style.cursor = "";
         });
 
-        map.on("click", heatLayers, (e) => {
-          let wasteIds = new Set();
-          for (const feature of e.features ?? []) {
-            wasteIds.add(feature.properties.w);
+        let $waste = document.querySelector(".waste");
+
+        let clickHeat = false;
+        map.on("click", (e) => {
+          const heatmapFeatures = map.queryRenderedFeatures(e.point, {
+            layers: heatLayers,
+          });
+
+          if (heatmapFeatures.length === 0) {
+            if (clickHeat) {
+              if ($waste?.classList.contains("open")) {
+                $waste?.classList.remove("open");
+              }
+              applySearch();
+            }
+            clickHeat = false;
+            return;
           }
-          console.log(e);
-          console.log([...wasteIds]);
+
+          let wasteIds = new Set();
+          for (const feature of heatmapFeatures) {
+            wasteIds.add(feature.properties.w.toString());
+          }
+
+          if (wasteIds.size === 0) return;
+
+          let results = Array.from(
+            document.querySelectorAll<HTMLElement>(".list .item")
+          ).filter((item) => wasteIds.has(item.dataset.id));
+          let $listul = document.querySelector(".list ul");
+
+          results.forEach((result) => {
+            $listul?.appendChild(result);
+            result.hidden = false;
+          });
+
+          let children = $listul.children;
+          for (let i = 0, n = children.length - results.length; i < n; i++) {
+            children[i].hidden = true;
+          }
+
+          if (!$waste?.classList.contains("open")) {
+            $waste?.classList.add("open");
+          }
+
+          clickHeat = true;
         });
       });
 
@@ -500,18 +578,11 @@ const waste = await directus
         }
       );
 
-      // let $titleareabutton = document.querySelector(".title-area button");
-      // $titleareabutton?.addEventListener("click", (e) => {
-      //     e.target.closest(".title-area").classList.toggle("open");
-      // });
-
       let $waste = document.querySelector(".waste");
       let $list = document.querySelector(".list");
       let $listul = document.querySelector(".list ul");
+      let $listitems = document.querySelectorAll<HTMLElement>(".waste .list .item");
       let $listbutton = document.querySelector(".list button");
-      // $listbutton?.addEventListener("click", (e) => {
-      //     e.target.closest(".list").classList.toggle("open");
-      // });
 
       let query = "";
 
@@ -526,22 +597,33 @@ const waste = await directus
       });
 
       function applySearch() {
-        let results = fuzzySearch(query);
+        let fzz = fuzzySearch(query);
 
-        results = results.filter((result) => result.score <= 3);
-
-        if (selectedCategory) {
-          results = results.filter(
-            (result) => result.item.dataset.cat === selectedCategory
-          );
+        let results = fzz.filter((result) => result.score <= 3).map(r => r.item);
+        if (results.length === 0) {
+          results = $listitems
+            .values()
+            .toArray()
+            .sort((a, b) => {
+              return parseInt(a.dataset.order) - parseInt(b.dataset.order);
+            });
         }
 
-        if (results.length > 0) {
-          console.log(results);
+        // console.log(...activeFilters);
+        if (activeFilters.size > 0) {
+          // console.log("results", results)
+          results = results.filter((result) => {
+            // console.log("cat", result.dataset.cat);
+            return activeFilters.has(result.dataset.cat);
+          });
+        }
+
+        if (true) {
+          //console.log(results);
 
           results.forEach((result) => {
-            $listul?.appendChild(result.item);
-            result.item.hidden = false;
+            $listul?.appendChild(result);
+            result.hidden = false;
           });
 
           let children = $listul.children;
@@ -549,14 +631,26 @@ const waste = await directus
             children[i].hidden = true;
           }
 
-          let ids = results.map((r) => parseInt(r.item.dataset.id));
-          console.log("ids", ids);
+          let ids = results.map((r) => parseInt(r.dataset.id));
+          // console.log("ids", ids);
 
           map.setFilter("waste", [
             "in",
             ["id"],
             ["array", "number", ids.length, ["literal", ids]],
           ]);
+
+          heatLayers.forEach((l) => {
+            map.setFilter(l, [
+              "all",
+              ["==", ["get", "cat"], l.slice(8)],
+              [
+                "in",
+                ["get", "w"],
+                ["array", "number", ids.length, ["literal", ids]],
+              ],
+            ]);
+          });
         } else {
           // TODO: SORT
           let q = document.querySelectorAll<HTMLElement>(".waste .list .item");
@@ -571,14 +665,15 @@ const waste = await directus
             el.hidden = false;
           });
           map.setFilter("waste", null);
+          heatLayers.forEach((l) => {
+            map.setFilter(l, ["==", ["get", "cat"], l.slice(8)]);
+          });
         }
       }
 
       // Filter functionality
       const $filterButtons = document.querySelectorAll(".filter button");
       const activeFilters = new Set(); // Track active category filters
-
-      let selectedCategory = "";
 
       // Add click event listeners to filter buttons
       $filterButtons.forEach((button) => {
@@ -592,38 +687,14 @@ const waste = await directus
           if (button.classList.contains("active")) {
             button.classList.remove("active");
             activeFilters.delete(category);
-            selectedCategory = "";
           } else {
             button.classList.add("active");
             activeFilters.add(category);
-            selectedCategory = category;
           }
 
-          // Apply filter to map
-          applyFilters();
+          applySearch();
         });
       });
-
-      // Function to apply filters to the map
-      function applyFilters() {
-        const map = window.mapInstance; // Access the map instance
-
-        if (!map) return;
-
-        // If no filters are active, show all categories
-        if (activeFilters.size === 0) {
-          map.setFilter("waste", null);
-          return;
-        }
-
-        // Create a filter expression for the categories
-        const filterExpression = [
-          "in",
-          ["get", "category"],
-          ...Array.from(activeFilters),
-        ];
-        map.setFilter("waste", filterExpression);
-      }
     </script>
   </body>
 </html>
