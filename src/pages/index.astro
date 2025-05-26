@@ -35,7 +35,7 @@ import { randomPosition } from "@turf/turf";
 // TODO: tooltip
 // TODO: click layer X
 
-const isProd = true
+const isProd = import.meta.env.PROD
 
 const waste = await directus
   .request(

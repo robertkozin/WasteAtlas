@@ -16,7 +16,7 @@ export async function getStaticPaths() {
   // console.log(waste[0].projects, waste[0].projects[0], waste[0].projects[0].project_id.images);
 
   return waste
-    .filter((waste) => !!waste.slug)
+    .filter((waste) => !!waste.slug && !!waste.category)
     .map((waste) => ({
       params: { waste: waste.slug },
       props: waste,
