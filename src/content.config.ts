@@ -22,7 +22,8 @@ import { randomPosition } from "@turf/turf";
 function wasteLoader(): Loader {
   return {
     name: "waste-loader",
-    load: async ({ store, logger, meta }) => {
+    load: async (context) => {
+      let {store, meta, logger} = context
       let lastModified = meta.get("lastModified") ?? new Date(0).toISOString();
       logger.info(`lastModified: ${lastModified}`);
 
@@ -56,7 +57,7 @@ function wasteLoader(): Loader {
             return { ...waste, blob, point, colour, order: idx };
           })
         )
-        .then((waste) => set(store, meta, waste));
+        .then((waste) => set(context, waste));
     },
     schema: z.object({
       id: z.number().int(),
@@ -77,7 +78,8 @@ function wasteLoader(): Loader {
 function imageLoader(): Loader {
   return {
     name: "image-loader",
-    load: async ({ store, logger, meta }) => {
+    load: async (context) => {
+      let {store, meta, logger} = context
       let lastModified = meta.get("lastModified") ?? new Date(0).toISOString();
       logger.info(`lastModified: ${lastModified}`);
 
@@ -89,7 +91,7 @@ function imageLoader(): Loader {
             filter: { modified_on: { _gte: lastModified } },
           })
         )
-        .then((images) => set(store, meta, images));
+        .then((images) => set(context, images));
     },
     schema: z.object({
       id: z.string(),
@@ -108,21 +110,24 @@ function imageLoader(): Loader {
   };
 }
 
-function set<T>(store: DataStore, meta: MetaStore, items: T[]) {
+function set<T>(ctx: LoaderContext, items: T[]) {
+  let setCount = 0
   for (const item of items) {
-    store.set({
+    ctx.store.set({
       id: item.id.toString(),
       data: item,
-    });
+    }) ? setCount += 1 : undefined;
   }
-  meta.set("lastModified", new Date().toISOString());
+  ctx.meta.set("lastModified", new Date().toISOString());
+  ctx.logger.info(`setCount: ${setCount}`)
 }
 
-export const collections = {
-  waste: defineCollection({
-    loader: wasteLoader(),
-  }),
-  images: defineCollection({
-    loader: imageLoader(),
-  }),
-};
+const wastes = defineCollection({
+  loader: wasteLoader(),
+})
+
+const images = defineCollection({
+  loader: imageLoader(),
+})
+
+export const collections = { wastes, images };

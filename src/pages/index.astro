@@ -10,7 +10,9 @@ import ContributePanel from "../components/map/ContributePanel.astro";
 import LayerPanel from "../components/map/LayerPanel.astro";
 import WastePanel from "../components/map/WastePanel.astro";
 
-const waste = await getCollection("waste").then((waste) =>
+const images = await getCollection("images")
+
+const waste = await getCollection("wastes").then((waste) =>
   waste.map((w) => w.data)
 );
 ---
