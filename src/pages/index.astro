@@ -23,11 +23,14 @@ import {
 } from "../utils";
 import { randomPosition } from "@turf/turf";
 
-const images = await getCollection("images");
+// const images = await getCollection("images");
 
 // const waste = await getCollection("wastes").then((waste) =>
 //   waste.map((w) => w.data)
 // );
+
+// TODO: waste colors
+// TODO: click on map
 
 const waste = await directus
   .request(
@@ -80,8 +83,12 @@ const waste = await directus
         height: 100%;
       }
 
+      .mapboxgl-ctrl-bottom-left {
+        display: none;
+      }
+
       .panel {
-        background-color: rgba(120, 124, 148, 0.8);
+        background-color: #787c94cc;
         color: #ffffff;
         border: none;
         z-index: 1;

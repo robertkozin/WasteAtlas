@@ -5,7 +5,7 @@
 <style is:global>
   dialog {
     padding: 1.5rem;
-    max-width: 400px;
+    max-width: 450px;
     border-radius: 30px;
     margin: auto;
     /* position: fixed;
@@ -15,7 +15,7 @@
 
   }
 
-  dialog button {
+  /* dialog button {
     position: absolute;
     top: -20px;
     right: -20px;
@@ -27,17 +27,17 @@
     outline: none;
     align-items: center;
     justify-content: center;
-  }
+  } */
 
   dialog::backdrop {
   /* Change to white with transparency instead of black */
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(2px);
 }
 
   dialog h2 {
     margin-top: 0;
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: 600;
     margin-bottom: 1rem;
   }
@@ -51,9 +51,10 @@
     bottom: 10px;
     left: 10px;
     border-radius: 50px;
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     display: flex;
+    padding: 10px;
     justify-content: center;
     align-items: center;
   }
@@ -69,17 +70,19 @@
 <dialog id="submit-dialog" closedby="any" class="panel" style="z-index: 1">
   <!-- <button data-open="#submit-dialog" class="panel">x</button> -->
   <h2>Contribute to Waste Atlas</h2>
-  <p>
+  <p class="text-lg">
     Help us expand our database by submitting information about waste sources in
     your area. Your contribution will help designers discover new potential
     materials.
   </p>
-  <p>
+  <div class="flex flex-row gap-4">
+    <button data-open="#submit-dialog" class="border-1 border-white py-1 px-2 rounded text-xl">Close</button>
+
     <a
       href="https://docs.google.com/forms/d/e/1FAIpQLSfMDb1cRH8I07CLu9XBmOjz8kIOplMNrOg16Lv1OCvKpK6Ydg/viewform?usp=sharing"
       target="_blank"
       autofocus
-      class="form-link">Open Submission Form</a
+      class="border-1 border-white py-1 px-2 rounded bg-white text-black text-xl">Open Submission Form</a
     >
-  </p>
+  </div>
 </dialog>

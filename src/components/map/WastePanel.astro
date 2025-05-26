@@ -70,13 +70,9 @@ const { waste } = Astro.props;
     border-radius: 100px;
     width: 30px;
     height: 30px;
-    text-align: center;
-    vertical-align: middle;
-    font-size: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transform: rotate(180deg) translateY(-2px);
   }
 
   .list ul img {
@@ -110,6 +106,7 @@ const { waste } = Astro.props;
     margin: 0;
     color: #d9d9d9;
     cursor: pointer;
+
   }
 
   .search > input {
@@ -166,7 +163,7 @@ const { waste } = Astro.props;
   </div>
 
   <section class="list panel">
-    <button class="panel" data-open=".waste">+</button>
+    <button class="panel font-light text-3xl" data-open=".waste">+</button>
     <div style="overflow: hidden; padding-left: 12px; border-radius: 30px;">
       <ul>
         {

@@ -6,7 +6,7 @@
   .title-area {
     top: 10px;
     left: 10px;
-    padding: 10px 20px;
+    padding: 18px 20px;
     max-width: 564px;
     border-radius: 30px;
     transition: display 1s;
@@ -16,6 +16,7 @@
     text-transform: uppercase;
     font-size: 32px;
     font-weight: 500;
+    line-height: 1;
   }
 
   .title-area button {
@@ -25,9 +26,7 @@
     border-radius: 100px;
     width: 30px;
     height: 30px;
-    font-size: 32px;
     display: flex;
-    outline: none;
     align-items: center;
     justify-content: center;
   }
@@ -55,8 +54,8 @@
 
 <header class="title-area panel">
   <h1>Waste Atlas</h1>
-  <button class="panel" data-open=".title-area"> </button>
-  <section>
+  <button class="panel font-light text-3xl" data-open=".title-area">+</button>
+  <section class="mt-2">
     <p>
       As designers, wouldn't it be amazing to visualize what unexplored, readily
       accessible, cheap, local materials there are to work with? Through this
