@@ -4,135 +4,44 @@ import { readItems } from "@directus/sdk";
 
 import Head from "../../components/Head.astro";
 
-import {types as ctypes} from "../../colours"
+import "../../styles/waste.css";
+
+import { types as ctypes } from "../../colours";
 
 export async function getStaticPaths() {
-  const waste = await directus.request(
-    readItems("waste", {
-      fields: ["*", { projects: ["project_id.*", "project_id.images.*"] }],
-    })
-  );
+    const waste = await directus.request(
+        readItems("waste", {
+            fields: [
+                "*",
+                { projects: ["project_id.*", "project_id.images.*"] },
+            ],
+        }),
+    );
 
-  // console.log(waste[0].projects, waste[0].projects[0], waste[0].projects[0].project_id.images);
+    // console.log(waste[0].projects, waste[0].projects[0], waste[0].projects[0].project_id.images);
 
-  return waste
-    .filter((waste) => !!waste.slug && !!waste.category)
-    .map((waste) => ({
-      params: { waste: waste.slug },
-      props: waste,
-    }));
+    return waste
+        .filter((waste) => !!waste.slug && !!waste.category)
+        .map((waste) => ({
+            params: { waste: waste.slug },
+            props: waste,
+        }));
 }
 
 const DIRECTUS_URL = import.meta.env.DIRECTUS_URL;
 
 const waste = Astro.props;
 
-console.log(ctypes)
+console.log(ctypes);
 ---
 
 <html lang="en">
-  <head>
-    <Head />
-    <title>{waste.name} - {waste.location}</title>
-
-    <style is:global>
-      html,
-      body {
-        height: 100%;
-      }
-
-      h1 {
-        font-family: var(--font-switzer);
-        font-size: 80px;
-        margin: 0;
-        font-weight: 500;
-      }
-
-      h2 {
-        font-family: var(--font-erode);
-        margin: 0;
-        color: #979c35;
-        font-size: 40px;
-        font-weight: 500;
-      }
-
-      p {
-        font-size: 16px;
-        font-family: var(--font-switzer);
-      }
-
-      .banner-wrap {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 300px; /* Adjust based on how much banner you want visible */
-        height: 300px;
-        overflow: hidden;
-      }
-
-      .banner {
-        background-color: #fdd22a;
-        color: #000;
-        font-family: var(--font-erode);
-        font-weight: 500;
-        font-size: 48px;
-        position: absolute;
-        top: 0px;
-        right: -230px;
-        width: 100%;
-        transform: rotate(45deg);
-        display: flex;
-        overflow: hidden;
-        white-space: nowrap;
-        gap: 0;
-        width: 800px;
-      }
-
-      .banner:hover span {
-        animation-play-state: paused;
-      }
-
-      .banner span {
-        padding-left: 0.8ch;
-        animation-duration: 15s;
-        animation-iteration-count: infinite;
-        animation-name: marquee-content;
-        animation-timing-function: linear;
-        display: block;
-      }
-
-      @keyframes marquee-content {
-        0% {
-          transform: translateX(100);
-        }
-        100% {
-          transform: translateX(-100%);
-        }
-      }
-
-      dl {
-        display: grid;
-        grid-gap: 4px 16px;
-        grid-template-columns: max-content;
-      }
-      dt {
-        font-weight: 500;
-      }
-      dd {
-        margin: 0;
-        grid-column-start: 2;
-      }
-
-      .project .desc {
-        border-radius: 30px;
-        padding: 45px 70px;
-        column-count: 2;
-        font-size: 16px;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- <nav>
+    <head>
+        <Head />
+        <title>{waste.name} - {waste.location}</title>
+    </head>
+    <body>
+        <!-- <nav>
       <button>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -151,70 +60,74 @@ console.log(ctypes)
         >
       </button>
     </nav> -->
-    <main>
-      <section class="flex flex-row p-5 gap-2 pb-12">
-        <div class="flex-6">
-          <h1>{waste.name}</h1>
-          <h2 style={`color: ${ctypes[waste.category].sub}`}>{waste.location}</h2>
+        <main>
+            <section class="flex flex-row p-5 gap-2 pb-12">
+                <div class="flex-6">
+                    <h1>{waste.name}</h1>
+                    <h2 style={`color: ${ctypes[waste.category].sub}`}>
+                        {waste.location}
+                    </h2>
 
-          <dl class="mt-1">
-            <!-- <dt>Submitted by</dt>
+                    <dl class="mt-1">
+                        <!-- <dt>Submitted by</dt>
             <dd>...</dd> -->
 
-            <dt>Type of waste</dt>
-            <dd class="capitalize">{waste.category}</dd>
+                        <dt>Type of waste</dt>
+                        <dd class="capitalize">{waste.category}</dd>
 
-            <!-- <dt>Also found in</dt>
+                        <!-- <dt>Also found in</dt>
             <dd>...</dd> -->
-          </dl>
+                    </dl>
 
-          <p class="mt-3">{waste.description}</p>
-        </div>
-
-        <div class="flex-4">
-          <img
-            class="h-0 ml-auto min-h-full object-contain"
-            src={`${import.meta.env.DIRECTUS_URL}/assets/${waste.image}`}
-          />
-        </div>
-      </section>
-
-      <section
-        class="projects p-10 flex flex-col gap-10"
-        style={`background: ${ctypes[waste.category].banner}b3`}
-      >
-        {
-          waste.projects
-            ?.map((project) => project.project_id)
-            .map((project) => {
-              return (
-                <div class="project">
-                  <h3 class="text-3xl font-medium mb-4">{project.name}</h3>
-                  <div class="flex flex-row gap-10">
-                    <div class="flex-1">
-                      <img
-                        src={`${DIRECTUS_URL}/assets/${project.images[0].directus_files_id}?width=800`}
-                      />
-                    </div>
-                    <div
-                      class="desc flex-2"
-                      style={`background: ${ctypes[waste.category].banner}`}
-                      set:html={project.description}
-                    />
-                  </div>
+                    <p class="mt-3">{waste.description}</p>
                 </div>
-              );
-            })
-        }
-      </section>
 
-      <div class="banner-wrap">
-        <div class="banner">
-          <span>{waste.characteristics}</span><span
-            >{waste.characteristics}</span
-          >
-        </div>
-      </div>
-    </main>
-  </body>
+                <div class="flex-4">
+                    <img
+                        class="h-0 ml-auto min-h-full object-contain"
+                        src={`${import.meta.env.DIRECTUS_URL}/assets/${waste.image}`}
+                    />
+                </div>
+            </section>
+
+            <section
+                class="projects p-10 flex flex-col gap-10"
+                style={`background: ${ctypes[waste.category].banner}b3`}
+            >
+                {
+                    waste.projects
+                        ?.map((project) => project.project_id)
+                        .map((project) => {
+                            return (
+                                <div class="project">
+                                    <h3 class="text-3xl font-medium mb-4">
+                                        {project.name}
+                                    </h3>
+                                    <div class="flex flex-row gap-10">
+                                        <div class="flex-1">
+                                            <img
+                                                src={`${DIRECTUS_URL}/assets/${project.images[0].directus_files_id}?width=800`}
+                                            />
+                                        </div>
+                                        <div
+                                            class="desc flex-2"
+                                            style={`background: ${ctypes[waste.category].banner}`}
+                                            set:html={project.description}
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        })
+                }
+            </section>
+
+            <div class="banner-wrap">
+                <div class="banner">
+                    <span>{waste.characteristics}</span><span
+                        >{waste.characteristics}</span
+                    >
+                </div>
+            </div>
+        </main>
+    </body>
 </html>

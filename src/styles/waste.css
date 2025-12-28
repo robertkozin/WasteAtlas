@@ -1,0 +1,93 @@
+html,
+body {
+  height: 100%;
+}
+
+h1 {
+  font-family: var(--font-switzer);
+  font-size: 80px;
+  margin: 0;
+  font-weight: 500;
+}
+
+h2 {
+  font-family: var(--font-erode);
+  margin: 0;
+  color: #979c35;
+  font-size: 40px;
+  font-weight: 500;
+}
+
+p {
+  font-size: 16px;
+  font-family: var(--font-switzer);
+}
+
+.banner-wrap {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px; /* Adjust based on how much banner you want visible */
+  height: 300px;
+  overflow: hidden;
+}
+
+.banner {
+  background-color: #fdd22a;
+  color: #000;
+  font-family: var(--font-erode);
+  font-weight: 500;
+  font-size: 48px;
+  position: absolute;
+  top: 0px;
+  right: -230px;
+  width: 100%;
+  transform: rotate(45deg);
+  display: flex;
+  overflow: hidden;
+  white-space: nowrap;
+  gap: 0;
+  width: 800px;
+}
+
+.banner:hover span {
+  animation-play-state: paused;
+}
+
+.banner span {
+  padding-left: 0.8ch;
+  animation-duration: 15s;
+  animation-iteration-count: infinite;
+  animation-name: marquee-content;
+  animation-timing-function: linear;
+  display: block;
+}
+
+@keyframes marquee-content {
+  0% {
+    transform: translateX(100);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+dl {
+  display: grid;
+  grid-gap: 4px 16px;
+  grid-template-columns: max-content;
+}
+dt {
+  font-weight: 500;
+}
+dd {
+  margin: 0;
+  grid-column-start: 2;
+}
+
+.project .desc {
+  border-radius: 30px;
+  padding: 45px 70px;
+  column-count: 2;
+  font-size: 16px;
+}

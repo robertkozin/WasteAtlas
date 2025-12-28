@@ -1,5 +1,5 @@
 import { defineCollection, z, reference } from "astro:content";
-import directus from "./lib/directus";
+import directus, { directusLoader, idsToString } from "./lib/directus";
 import { readItems, readFiles } from "@directus/sdk";
 import { optional } from "astro:schema";
 import type {
@@ -17,13 +17,14 @@ import {
   isPolygon,
   onlyCoords,
 } from "./utils";
-import { randomPosition } from "@turf/turf";
+import { circle, randomPoint, randomPosition } from "@turf/turf";
+import type { Point, Polygon } from "geojson";
 
 function wasteLoader(): Loader {
   return {
     name: "waste-loader",
     load: async (context) => {
-      let {store, meta, logger} = context
+      let { store, meta, logger } = context;
       let lastModified = meta.get("lastModified") ?? new Date(0).toISOString();
       logger.info(`lastModified: ${lastModified}`);
 
@@ -33,7 +34,7 @@ function wasteLoader(): Loader {
             fields: ["*"],
             filter: { date_updated: { _gte: lastModified } },
             sort: ["name", "location"],
-          })
+          }),
         )
         .then((waste) =>
           waste.map((waste, idx) => {
@@ -47,15 +48,15 @@ function wasteLoader(): Loader {
               cat === "domestic"
                 ? "#9967CA"
                 : cat === "commercial"
-                ? "#FC4008"
-                : cat === "agricultural"
-                ? "#979C35"
-                : cat === "industrial"
-                ? "#A1A1A1"
-                : "pink";
+                  ? "#FC4008"
+                  : cat === "agricultural"
+                    ? "#979C35"
+                    : cat === "industrial"
+                      ? "#A1A1A1"
+                      : "pink";
 
             return { ...waste, blob, point, colour, order: idx };
-          })
+          }),
         )
         .then((waste) => set(context, waste));
     },
@@ -79,7 +80,7 @@ function imageLoader(): Loader {
   return {
     name: "image-loader",
     load: async (context) => {
-      let {store, meta, logger} = context
+      let { store, meta, logger } = context;
       let lastModified = meta.get("lastModified") ?? new Date(0).toISOString();
       logger.info(`lastModified: ${lastModified}`);
 
@@ -89,7 +90,7 @@ function imageLoader(): Loader {
             fields: ["*"],
             // TODO: filter image type
             filter: { modified_on: { _gte: lastModified } },
-          })
+          }),
         )
         .then((images) => set(context, images));
     },
@@ -111,23 +112,94 @@ function imageLoader(): Loader {
 }
 
 function set<T>(ctx: LoaderContext, items: T[]) {
-  let setCount = 0
+  let setCount = 0;
   for (const item of items) {
     ctx.store.set({
       id: item.id.toString(),
       data: item,
-    }) ? setCount += 1 : undefined;
+    })
+      ? (setCount += 1)
+      : undefined;
   }
+
   ctx.meta.set("lastModified", new Date().toISOString());
-  ctx.logger.info(`setCount: ${setCount}`)
+  ctx.logger.info(`setCount: ${setCount}`);
 }
 
+const projects = defineCollection({
+  loader: directusLoader({
+    command: (lastModified) =>
+      readItems("project", {
+        fields: ["*"],
+        filter: { date_updated: { _gte: lastModified } },
+      }),
+    map: (project) => {
+      return {
+        ...project,
+        images: idsToString(project.images),
+        wastes: idsToString(project.wastes),
+      };
+    },
+  }),
+  schema: z.object({
+    id: z.number().int(),
+    status: z.string(),
+    name: z.string(),
+    description: z.string().optional(),
+    images: z.array(reference("images")).default([]),
+    wastes: z.array(reference("wastes")).default([]),
+  }),
+});
+
 const wastes = defineCollection({
-  loader: wasteLoader(),
-})
+  loader: directusLoader({
+    command: (lastModified) =>
+      readItems("waste", {
+        fields: ["*"],
+        filter: { date_updated: { _gte: lastModified } },
+        sort: ["name", "location"],
+      }),
+    map: (waste, idx) => {
+      let point = findPoint(waste.point);
+      let blob = findPolygon(waste.point);
+      if (!point) {
+        point = randomPoint(1, {
+          bbox: [-56.678467, 20.231275, -25.389404, 40.522151],
+        }).features[0].geometry;
+      }
+      if (!blob) {
+        blob = circle(point, 30).geometry;
+      }
+
+      let image = idsToString(waste.image);
+      let projects = idsToString(waste.projects);
+
+      return { ...waste, image, projects, point, blob, order: idx };
+    },
+  }),
+  schema: z.object({
+    id: z.number().int(),
+    name: z.string(),
+    location: z.string(),
+    category: z.string().nullish().default("unknown"),
+    slug: z.optional(z.string()),
+    characteristics: z.string().default(""),
+    image: z.optional(reference("images")),
+    projects: z.array(reference("projects")).default([]),
+    point: z
+      .any()
+      .optional()
+      .transform((val) => val as Point),
+    blob: z
+      .any()
+      .optional()
+      .transform((val) => val as Polygon),
+    order: z.number().int(),
+  }),
+});
 
 const images = defineCollection({
   loader: imageLoader(),
-})
+});
 
-export const collections = { wastes, images };
+export const collections = { projects, wastes, images };
