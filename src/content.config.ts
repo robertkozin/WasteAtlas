@@ -1,5 +1,9 @@
 import { defineCollection, z, reference } from "astro:content";
-import directus, { directusLoader, idsToString } from "./lib/directus";
+import directus, {
+  directusLoader,
+  idsToString,
+  idToString,
+} from "./lib/directus";
 import { readItems, readFiles } from "@directus/sdk";
 import { optional } from "astro:schema";
 import type {
@@ -20,118 +24,69 @@ import {
 import { circle, randomPoint, randomPosition } from "@turf/turf";
 import type { Point, Polygon } from "geojson";
 
-function wasteLoader(): Loader {
-  return {
-    name: "waste-loader",
-    load: async (context) => {
-      let { store, meta, logger } = context;
-      let lastModified = meta.get("lastModified") ?? new Date(0).toISOString();
-      logger.info(`lastModified: ${lastModified}`);
+const wastes = defineCollection({
+  loader: directusLoader({
+    command: (lastModified) =>
+      readItems("waste", {
+        fields: ["*"],
+        filter: {
+          _or: [
+            { date_created: { _gte: lastModified } },
+            { date_updated: { _gte: lastModified } },
+          ],
+        },
+        sort: ["name", "location"],
+      }),
+    map: (waste, idx) => {
+      let point = findPoint(waste.point);
+      let blob = findPolygon(waste.point);
+      if (!point) {
+        point = randomPoint(1, {
+          bbox: [-56.678467, 20.231275, -25.389404, 40.522151],
+        }).features[0].geometry;
+      }
+      if (!blob) {
+        blob = circle(point, 30).geometry;
+      }
 
-      directus
-        .request(
-          readItems("waste", {
-            fields: ["*"],
-            filter: { date_updated: { _gte: lastModified } },
-            sort: ["name", "location"],
-          }),
-        )
-        .then((waste) =>
-          waste.map((waste, idx) => {
-            let point = waste.point
-              ? onlyCoords(findPoint(waste.point))
-              : randomPosition([-56.678467, 20.231275, -25.389404, 40.522151]);
-            let blob = waste.point ? onlyCoords(findPolygon(waste.point)) : [];
+      let image = idToString(waste.image);
+      let projects = idsToString(waste.projects);
 
-            let cat = waste.category;
-            let colour =
-              cat === "domestic"
-                ? "#9967CA"
-                : cat === "commercial"
-                  ? "#FC4008"
-                  : cat === "agricultural"
-                    ? "#979C35"
-                    : cat === "industrial"
-                      ? "#A1A1A1"
-                      : "pink";
-
-            return { ...waste, blob, point, colour, order: idx };
-          }),
-        )
-        .then((waste) => set(context, waste));
+      return { ...waste, image, projects, point, blob, order: idx };
     },
-    schema: z.object({
-      id: z.number().int(),
-      name: z.string(),
-      location: z.string(),
-      category: z.string().default("unknown"),
-      slug: z.optional(z.string()),
-      characteristics: z.string().default(""),
-      image: z.optional(reference("images")),
-      projects: z.array(reference("projects")).default([]),
-      point: z.array(z.number()).length(2),
-      blob: z.array(z.array(z.number()).length(2)),
-      order: z.number().int(),
-    }),
-  };
-}
-
-function imageLoader(): Loader {
-  return {
-    name: "image-loader",
-    load: async (context) => {
-      let { store, meta, logger } = context;
-      let lastModified = meta.get("lastModified") ?? new Date(0).toISOString();
-      logger.info(`lastModified: ${lastModified}`);
-
-      directus
-        .request(
-          readFiles({
-            fields: ["*"],
-            // TODO: filter image type
-            filter: { modified_on: { _gte: lastModified } },
-          }),
-        )
-        .then((images) => set(context, images));
-    },
-    schema: z.object({
-      id: z.string(),
-      filename_disk: z.optional(z.string()),
-      filename_download: z.string(),
-      title: z.optional(z.string()),
-      type: z.optional(z.string()),
-      width: z.optional(z.number()),
-      height: z.optional(z.number()),
-      filesize: z.optional(z.number()),
-      description: z.optional(z.string()),
-      location: z.optional(z.string()),
-      tags: z.optional(z.array(z.string())),
-      metadata: z.optional(z.record(z.any())),
-    }),
-  };
-}
-
-function set<T>(ctx: LoaderContext, items: T[]) {
-  let setCount = 0;
-  for (const item of items) {
-    ctx.store.set({
-      id: item.id.toString(),
-      data: item,
-    })
-      ? (setCount += 1)
-      : undefined;
-  }
-
-  ctx.meta.set("lastModified", new Date().toISOString());
-  ctx.logger.info(`setCount: ${setCount}`);
-}
+  }),
+  schema: z.object({
+    id: z.number().int(),
+    name: z.string(),
+    location: z.string(),
+    category: z.string().nullable().default("unknown"),
+    slug: z.string().nullable(),
+    characteristics: z.string().default(""),
+    image: reference("images").nullable(),
+    projects: z.array(reference("projects")).default([]),
+    point: z
+      .any()
+      .optional()
+      .transform((val) => val as Point),
+    blob: z
+      .any()
+      .optional()
+      .transform((val) => val as Polygon),
+    order: z.number().int(),
+  }),
+});
 
 const projects = defineCollection({
   loader: directusLoader({
     command: (lastModified) =>
       readItems("project", {
         fields: ["*"],
-        filter: { date_updated: { _gte: lastModified } },
+        filter: {
+          _or: [
+            { date_created: { _gte: lastModified } },
+            { date_updated: { _gte: lastModified } },
+          ],
+        },
       }),
     map: (project) => {
       return {
@@ -151,55 +106,35 @@ const projects = defineCollection({
   }),
 });
 
-const wastes = defineCollection({
+const images = defineCollection({
   loader: directusLoader({
     command: (lastModified) =>
-      readItems("waste", {
+      readFiles({
         fields: ["*"],
-        filter: { date_updated: { _gte: lastModified } },
-        sort: ["name", "location"],
+        // TODO: filter for only images?
+        filter: {
+          _or: [
+            { created_on: { _gte: lastModified } },
+            { modified_on: { _gte: lastModified } },
+          ],
+        },
       }),
-    map: (waste, idx) => {
-      let point = findPoint(waste.point);
-      let blob = findPolygon(waste.point);
-      if (!point) {
-        point = randomPoint(1, {
-          bbox: [-56.678467, 20.231275, -25.389404, 40.522151],
-        }).features[0].geometry;
-      }
-      if (!blob) {
-        blob = circle(point, 30).geometry;
-      }
-
-      let image = idsToString(waste.image);
-      let projects = idsToString(waste.projects);
-
-      return { ...waste, image, projects, point, blob, order: idx };
-    },
+    map: (file) => file,
   }),
   schema: z.object({
-    id: z.number().int(),
-    name: z.string(),
-    location: z.string(),
-    category: z.string().nullish().default("unknown"),
-    slug: z.optional(z.string()),
-    characteristics: z.string().default(""),
-    image: z.optional(reference("images")),
-    projects: z.array(reference("projects")).default([]),
-    point: z
-      .any()
-      .optional()
-      .transform((val) => val as Point),
-    blob: z
-      .any()
-      .optional()
-      .transform((val) => val as Polygon),
-    order: z.number().int(),
+    id: z.string(),
+    filename_disk: z.string().nullish(),
+    filename_download: z.string(),
+    title: z.string().nullish(),
+    type: z.string().nullish(),
+    width: z.number().nullish(),
+    height: z.number().nullish(),
+    filesize: z.number().nullish(),
+    description: z.string().nullish(),
+    location: z.string().nullish(),
+    tags: z.array(z.string()).nullish(),
+    metadata: z.record(z.any()).nullish(),
   }),
-});
-
-const images = defineCollection({
-  loader: imageLoader(),
 });
 
 export const collections = { projects, wastes, images };

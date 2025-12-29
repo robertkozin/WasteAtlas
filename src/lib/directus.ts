@@ -5,6 +5,7 @@ import {
   type DirectusClient,
   type IfAny,
   type RestCommand,
+  readFiles,
 } from "@directus/sdk";
 import type { Loader, LoaderContext } from "astro/loaders";
 
@@ -35,7 +36,7 @@ export function directusLoader<U extends Obj>(options: {
       generateDigest,
     }): Promise<void> => {
       let lastModified = meta.get("lastModified") ?? new Date(0).toISOString();
-      logger.info(`lastModified: ${lastModified}`);
+      logger.info(`${collection} lastModified: ${lastModified}`);
 
       const items = await directus
         .request(options.command(lastModified))
@@ -57,16 +58,17 @@ export function directusLoader<U extends Obj>(options: {
   };
 }
 
-export function idsToString(
-  ids: number[] | null | undefined,
-): string | string[] | null {
+export function idToString(id: number | null | undefined): string | null {
+  if (id == null || id == undefined) {
+    return null;
+  }
+  return String(id);
+}
+
+export function idsToString(ids: number[] | null | undefined): string[] {
   if (ids == null || ids == undefined) {
     return [];
   }
 
-  if (Array.isArray(ids)) {
-    return ids.map((id) => String(id));
-  }
-
-  return String(ids);
+  return ids.map((id) => String(id));
 }
