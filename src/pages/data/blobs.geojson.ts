@@ -30,7 +30,7 @@ function toBlob(waste: CollectionEntry<"wastes">): Feature<MultiPoint> {
 
   return multiPoint(
     coordAll(truncate(smoothGrid, { precision: 3 })),
-    { cat: waste.data.category },
+    { cat: waste.data.category, w: waste.data.id },
     { id: waste.data.id },
   );
 }
