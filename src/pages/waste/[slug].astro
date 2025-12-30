@@ -7,6 +7,9 @@ import { types as ctypes } from "../../colours";
 
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
+import { getEntries } from "astro:content";
+import WasteProject from "./WasteProject.astro";
+import type { InferEntrySchema } from "astro:content";
 
 export async function getStaticPaths() {
     const wastes = await getCollection("wastes", (waste) => {
@@ -15,18 +18,21 @@ export async function getStaticPaths() {
         return hasSlug && hasCategory;
     });
     return wastes.map((waste) => ({
-        params: { waste: waste.data.slug },
-        props: waste,
+        params: { slug: waste.data.slug },
+        props: { waste: waste.data },
     }));
 }
 
 interface Props {
-    waste: CollectionEntry<"wastes">;
+    waste: InferEntrySchema<"wastes">;
 }
 
 const DIRECTUS_URL = import.meta.env.DIRECTUS_URL;
 
-const waste = Astro.props.waste.data;
+const waste = Astro.props.waste;
+//console.log("waste", waste);
+
+const projects = (await getEntries(waste.projects)).map((p) => p.data);
 ---
 
 <html lang="en">
@@ -64,29 +70,9 @@ const waste = Astro.props.waste.data;
                 style={`background: ${ctypes[waste.category].banner}b3`}
             >
                 {
-                    waste.projects
-                        ?.map((project) => project.project_id)
-                        .map((project) => {
-                            return (
-                                <div class="project">
-                                    <h3 class="text-3xl font-medium mb-4">
-                                        {project.name}
-                                    </h3>
-                                    <div class="flex flex-row gap-10">
-                                        <div class="flex-1">
-                                            <img
-                                                src={`${DIRECTUS_URL}/assets/${project.images[0].directus_files_id}?width=800`}
-                                            />
-                                        </div>
-                                        <div
-                                            class="desc flex-2"
-                                            style={`background: ${ctypes[waste.category].banner}`}
-                                            set:html={project.description}
-                                        />
-                                    </div>
-                                </div>
-                            );
-                        })
+                    projects.map((project) => (
+                        <WasteProject waste={waste} project={project} />
+                    ))
                 }
             </section>
 
