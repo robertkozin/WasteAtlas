@@ -1,28 +1,10 @@
-import { defineCollection, z, reference } from "astro:content";
-import directus, {
-  directusLoader,
-  idsToString,
-  idToString,
-} from "./lib/directus";
-import { readItems, readFiles } from "@directus/sdk";
-import { optional } from "astro:schema";
-import type {
-  Loader,
-  LoaderContext,
-  DataStore,
-  MetaStore,
-} from "astro/loaders";
+import { readFiles, readItems } from "@directus/sdk";
+import { defineCollection, reference, z } from "astro:content";
+import { directusLoader, idsToString, idToString } from "./lib/directus";
 
-import {
-  findPoint,
-  findPolygon,
-  isGeometryCollection,
-  isPoint,
-  isPolygon,
-  onlyCoords,
-} from "./utils";
-import { circle, randomPoint, randomPosition } from "@turf/turf";
+import { circle, randomPoint } from "@turf/turf";
 import type { Point, Polygon } from "geojson";
+import { findPoint, findPolygon } from "./utils";
 
 const wastes = defineCollection({
   loader: directusLoader({
@@ -59,6 +41,7 @@ const wastes = defineCollection({
     id: z.number().int(),
     name: z.string(),
     location: z.string(),
+    status: z.enum(["published", "ready", "draft", "archived"]),
     category: z.string().nullable().default("unknown"),
     slug: z.string().nullable(),
     characteristics: z.string().default(""),

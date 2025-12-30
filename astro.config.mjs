@@ -16,6 +16,7 @@ export default defineConfig({
         context: "server",
         access: "public",
         default: "https://directus.thewasteatlas.com",
+        optional: true,
       }),
       DIRECTUS_TOKEN: envField.string({
         context: "server",
@@ -44,7 +45,13 @@ export default defineConfig({
         provider: "local",
         name: "Erode",
         cssVariable: "--font-erode",
-        fallbacks: ["Charter", "Bitstream Charter", "Sitka Text", "Cambria", "serif"],
+        fallbacks: [
+          "Charter",
+          "Bitstream Charter",
+          "Sitka Text",
+          "Cambria",
+          "serif",
+        ],
         variants: [
           {
             weight: "100 900",

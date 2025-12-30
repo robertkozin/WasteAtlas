@@ -1,36 +1,32 @@
 ---
-import directus from "../../lib/directus";
-import { readItems } from "@directus/sdk";
-
 import Head from "../../components/Head.astro";
 
 import "../../styles/waste.css";
 
 import { types as ctypes } from "../../colours";
 
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+
 export async function getStaticPaths() {
-    const waste = await directus.request(
-        readItems("waste", {
-            fields: [
-                "*",
-                { projects: ["project_id.*", "project_id.images.*"] },
-            ],
-        }),
-    );
+    const wastes = await getCollection("wastes", (waste) => {
+        const hasSlug = waste.data.slug !== null;
+        const hasCategory = waste.data.category !== null;
+        return hasSlug && hasCategory;
+    });
+    return wastes.map((waste) => ({
+        params: { waste: waste.data.slug },
+        props: waste,
+    }));
+}
 
-    // console.log(waste[0].projects, waste[0].projects[0], waste[0].projects[0].project_id.images);
-
-    return waste
-        .filter((waste) => !!waste.slug && !!waste.category)
-        .map((waste) => ({
-            params: { waste: waste.slug },
-            props: waste,
-        }));
+interface Props {
+    waste: CollectionEntry<"wastes">;
 }
 
 const DIRECTUS_URL = import.meta.env.DIRECTUS_URL;
 
-const waste = Astro.props;
+const waste = Astro.props.waste.data;
 ---
 
 <html lang="en">
@@ -39,25 +35,6 @@ const waste = Astro.props;
         <title>{waste.name} - {waste.location}</title>
     </head>
     <body>
-        <!-- <nav>
-      <button>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-left"
-          ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
-            d="M5 12l14 0"></path><path d="M5 12l4 4"></path><path
-            d="M5 12l4 -4"></path></svg
-        >
-      </button>
-    </nav> -->
         <main>
             <section class="flex flex-row p-5 gap-2 pb-12">
                 <div class="flex-6">
@@ -67,14 +44,8 @@ const waste = Astro.props;
                     </h2>
 
                     <dl class="mt-1">
-                        <!-- <dt>Submitted by</dt>
-            <dd>...</dd> -->
-
                         <dt>Type of waste</dt>
                         <dd class="capitalize">{waste.category}</dd>
-
-                        <!-- <dt>Also found in</dt>
-            <dd>...</dd> -->
                     </dl>
 
                     <p class="mt-3">{waste.description}</p>
@@ -83,7 +54,7 @@ const waste = Astro.props;
                 <div class="flex-4">
                     <img
                         class="h-0 ml-auto min-h-full object-contain"
-                        src={`${import.meta.env.DIRECTUS_URL}/assets/${waste.image}`}
+                        src={`${DIRECTUS_URL}/assets/${waste.image}`}
                     />
                 </div>
             </section>

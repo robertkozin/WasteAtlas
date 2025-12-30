@@ -1,60 +1,24 @@
 ---
 import { getCollection } from "astro:content";
 import Head from "../components/Head.astro";
-
 import HeatmapControls from "../components/HeatmapControls.astro";
-
 import TitlePanel from "../components/map/TitlePanel.astro";
 import ContributePanel from "../components/map/ContributePanel.astro";
-
 import LayerPanel from "../components/map/LayerPanel.astro";
 import WastePanel from "../components/map/WastePanel.astro";
-
-import directus from "../lib/directus";
-import { readItems, readFiles } from "@directus/sdk";
-
-import { findPoint, findPolygon, onlyCoords } from "../utils";
-import { randomPosition } from "@turf/turf";
 
 import "../styles/map.css";
 
 const isProd = import.meta.env.PROD;
 
-const waste = await directus
-    .request(
-        readItems("waste", {
-            fields: ["*"],
-            //filter: { date_updated: { _gte: lastModified } },
-            filter: {
-                status: isProd ? { _nin: ["draft", "archived"] } : undefined,
-            },
-            sort: ["name", "location"],
-        }),
-    )
-    .then((waste) =>
-        waste.map((waste, idx) => {
-            let point = waste.point
-                ? onlyCoords(findPoint(waste.point))
-                : randomPosition([
-                      -56.678467, 20.231275, -25.389404, 40.522151,
-                  ]);
-            let blob = waste.point ? onlyCoords(findPolygon(waste.point)) : [];
-
-            let cat = waste.category;
-            let colour =
-                cat === "domestic"
-                    ? "#9967CA"
-                    : cat === "commercial"
-                      ? "#FC4008"
-                      : cat === "agricultural"
-                        ? "#979C35"
-                        : cat === "industrial"
-                          ? "#A1A1A1"
-                          : "pink";
-
-            return { ...waste, blob, point, colour, order: idx };
-        }),
-    );
+const wastes = getCollection("wastes", (waste) => {
+    if (isProd) {
+        const isReady = ["ready", "published"].includes(waste.data.status);
+        return isReady;
+    } else {
+        return true;
+    }
+});
 ---
 
 <html lang="en">
@@ -69,41 +33,12 @@ const waste = await directus
 
         <ContributePanel />
 
-        <WastePanel waste={waste} />
+        <WastePanel wastes={wastes} />
 
         <LayerPanel />
 
         <!-- <HeatmapControls /> -->
         <div id="map"></div>
-
-        <script>
-            let ack = window.localStorage.getItem("ack");
-            let ackAt = parseInt(ack || "0") || 0;
-            let nowSeconds = Date.now() / 1000;
-            let monthSeconds = 60 * 60 * 24 * 30;
-            if (ackAt + monthSeconds < nowSeconds) {
-                document.querySelector(".title-area")?.classList.add("open");
-                window.localStorage.setItem("ack", Date.now().toString());
-            }
-        </script>
-
-        <script>
-            document
-                .querySelectorAll<HTMLElement>("[data-open]")
-                .forEach((el) => {
-                    let targetEl = document.querySelector(el.dataset.open);
-
-                    el.addEventListener("click", (ev) => {
-                        if (targetEl instanceof HTMLDialogElement) {
-                            targetEl.open
-                                ? targetEl.close()
-                                : targetEl.showModal();
-                        } else {
-                            targetEl?.classList.toggle("open");
-                        }
-                    });
-                });
-        </script>
 
         <script src="../scripts/map.ts"></script>
     </body>

@@ -2,12 +2,9 @@ import {
   createDirectus,
   rest,
   staticToken,
-  type DirectusClient,
-  type IfAny,
   type RestCommand,
-  readFiles,
 } from "@directus/sdk";
-import type { Loader, LoaderContext } from "astro/loaders";
+import type { Loader } from "astro/loaders";
 
 let directus = createDirectus(import.meta.env.DIRECTUS_URL).with(rest());
 

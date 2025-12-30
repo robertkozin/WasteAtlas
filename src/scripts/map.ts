@@ -48,82 +48,6 @@ const map = new maplibre.Map({
 // Store map instance globally for filter access
 window.mapInstance = map;
 
-let a = (args) => {
-  //console.log(args);
-  return args;
-};
-
-function coordsToPositions(coords: number[]): Position[][] {
-  const positions: Position[] = [];
-  for (let i = 0; i < coords.length; i += 2) {
-    positions.push([coords[i], coords[i + 1]]);
-  }
-  return [positions];
-}
-
-function wasteGeoJSON(): GeoJSON.FeatureCollection<GeoJSON.Point> {
-  const features = document
-    .querySelectorAll<HTMLElement>(".list .item")
-    .values()
-    .map((waste) => {
-      return {
-        type: "Feature",
-        id: waste.dataset.id || "",
-        geometry: {
-          type: "Point",
-          coordinates: waste.dataset.coords?.split(" ").map(parseFloat),
-        },
-        properties: {
-          category: waste.dataset.cat,
-        },
-      };
-    });
-
-  return {
-    type: "FeatureCollection",
-    features: features.toArray(),
-  };
-}
-
-function blobGeoJSON(): GeoJSON.FeatureCollection<GeoJSON.Point> {
-  function isEmpty(str?: string): str is string {
-    return !str || str.length === 0;
-  }
-
-  const features = document
-    .querySelectorAll<HTMLElement>(".list .item")
-    .values()
-    .filter((waste) => !isEmpty(waste.dataset.blob))
-    .flatMap((waste) => {
-      let outlineCoords = waste.dataset.blob.split(" ").map(parseFloat);
-      let props = {
-        cat: waste.dataset.cat,
-        w: parseInt(waste.dataset.id ?? "0"),
-      };
-      let outline = polygon(coordsToPositions(outlineCoords));
-      let smooth = polygonSmooth(outline, { iterations: 3 });
-      let smoothBbox = bbox(smooth);
-
-      let smoothGrid = pointGrid(smoothBbox, 10, {
-        mask: smooth.features[0],
-      });
-      let smoothOutlinePoints = explode(
-        lineChunk(polygonToLine(smooth.features[0]), 10),
-      );
-
-      smoothGrid.features.push(...smoothOutlinePoints.features);
-
-      smoothGrid.features.forEach((f) => {
-        f.properties = props;
-      });
-      return smoothGrid.features;
-    });
-  return {
-    type: "FeatureCollection",
-    features: features.toArray(),
-  };
-}
-
 let $titlearea = document.querySelector(".title-area");
 map.on("move", () => {
   if ($titlearea?.classList.contains("open")) {
@@ -138,11 +62,7 @@ let heatLayers = [
   "heatmap_industrial",
 ];
 
-map.setStyle;
-
 map.on("load", () => {
-  //map.setProjection({type: "globe"})
-
   map.addSource("waste", {
     type: "geojson",
     data: "./data/points.geojson",
@@ -151,12 +71,7 @@ map.on("load", () => {
   map.addSource("blobs", {
     type: "geojson",
     data: "./data/blobs.geojson",
-    //data: blobGeoJSON(),
   });
-
-  // map.loadImage("./recycle.png").then((image) =>
-  //     map.addImage("recycle", image.data),
-  // );
 
   let rad: maplibre.DataDrivenPropertyValueSpecification<number> = [
     "interpolate",
@@ -276,8 +191,6 @@ map.on("load", () => {
     },
     "place_village",
   );
-
-  map.setPaintProperty;
 
   map.addLayer({
     id: "waste",
@@ -490,5 +403,28 @@ $filterButtons.forEach((button) => {
     }
 
     applySearch();
+  });
+});
+
+// The welcome box functionality
+let ack = window.localStorage.getItem("ack");
+let ackAt = parseInt(ack || "0") || 0;
+let nowSeconds = Date.now() / 1000;
+let monthSeconds = 60 * 60 * 24 * 30;
+if (ackAt + monthSeconds < nowSeconds) {
+  document.querySelector(".title-area")?.classList.add("open");
+  window.localStorage.setItem("ack", Date.now().toString());
+}
+
+// Generic functionality to make toggleable elements
+document.querySelectorAll<HTMLElement>("[data-open]").forEach((el) => {
+  let targetEl = document.querySelector(el.dataset.open);
+
+  el.addEventListener("click", (ev) => {
+    if (targetEl instanceof HTMLDialogElement) {
+      targetEl.open ? targetEl.close() : targetEl.showModal();
+    } else {
+      targetEl?.classList.toggle("open");
+    }
   });
 });
