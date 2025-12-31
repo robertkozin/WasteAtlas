@@ -1,0 +1,36 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getAssetUrl } from "../../lib/directus";
+import { Image } from "astro:assets";
+import { categoryColors } from "../../lib/constants";
+
+interface Props {
+    projectData: CollectionEntry<"projects">["data"];
+    wasteData: CollectionEntry<"wastes">["data"];
+}
+
+const { projectData, wasteData } = Astro.props;
+
+const colours = categoryColors[wasteData.category];
+---
+
+<div class="project">
+    <h3 class="text-3xl font-medium mb-4">
+        {projectData.name}
+    </h3>
+    <div class="flex flex-row gap-10">
+        <div class="flex-1">
+            <Image
+                src={getAssetUrl(projectData.image_refs[0].id)}
+                width={800}
+                alt=""
+                inferSize
+            />
+        </div>
+        <div
+            class="desc flex-2"
+            style={`background: ${colours.banner}`}
+            set:html={projectData.description}
+        />
+    </div>
+</div>

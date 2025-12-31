@@ -1,17 +1,11 @@
 ---
 import { getCollection } from "astro:content";
-import Head from "../components/Head.astro";
-import HeatmapControls from "../components/HeatmapControls.astro";
-import TitlePanel from "../components/map/TitlePanel.astro";
-import ContributePanel from "../components/map/ContributePanel.astro";
-import LayerPanel from "../components/map/LayerPanel.astro";
-import WastePanel from "../components/map/WastePanel.astro";
-
-import "../styles/map.css";
+import MapPage from "../components/map/MapPage.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
 const isProd = import.meta.env.PROD;
 
-const wastes = await getCollection("wastes", (waste) => {
+let wasteCol = await getCollection("wastes", (waste) => {
     if (isProd) {
         const isReady = ["ready", "published"].includes(waste.data.status);
         return isReady;
@@ -19,27 +13,9 @@ const wastes = await getCollection("wastes", (waste) => {
         return true;
     }
 });
+let wastes = wasteCol.map((w) => w.data);
 ---
 
-<html lang="en">
-    <head>
-        <!-- TODO: FAVICON <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
-        <Head />
-        <title>Waste Atlas</title>
-    </head>
-
-    <body>
-        <TitlePanel />
-
-        <ContributePanel />
-
-        <WastePanel wastes={wastes} />
-
-        <LayerPanel />
-
-        <!-- <HeatmapControls /> -->
-        <div id="map"></div>
-
-        <script src="../scripts/map.ts"></script>
-    </body>
-</html>
+<BaseLayout title="Waste Atlas">
+    <MapPage wastes={wastes} />
+</BaseLayout>

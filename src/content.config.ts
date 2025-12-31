@@ -1,17 +1,23 @@
 import { readFiles, readItems } from "@directus/sdk";
 import { defineCollection, reference, z } from "astro:content";
-import { directusLoader, idsToString, idToString } from "./lib/directus";
+import {
+  directusLoader,
+  getAssetUrl,
+  idsToString,
+  idToString,
+} from "./lib/directus";
 
 import { circle, randomPoint } from "@turf/turf";
 import type { Point, Polygon } from "geojson";
-import { findPoint, findPolygon } from "./utils";
+import { findPoint, findPolygon } from "./lib/geojson";
 
 const wastes = defineCollection({
   loader: directusLoader({
     command: (lastModified) =>
       readItems("waste", {
-        fields: ["*"],
+        fields: ["*", "projects.project_id"],
         filter: {
+          slug: { _nnull: true },
           _or: [
             { date_created: { _gte: lastModified } },
             { date_updated: { _gte: lastModified } },
@@ -31,30 +37,35 @@ const wastes = defineCollection({
         blob = circle(point, 30).geometry;
       }
 
-      let image = idToString(waste.image);
-      let projects = idsToString(waste.projects);
+      let image_ref = waste.image;
+      let project_refs = waste.projects.map((proj) => String(proj.project_id));
 
-      return { ...waste, image, projects, point, blob, order: idx };
+      return { ...waste, image_ref, project_refs, point, blob, order: idx };
     },
   }),
   schema: z.object({
     id: z.number().int(),
     name: z.string(),
+    description: z.string().default(""),
     location: z.string(),
-    status: z.enum(["published", "ready", "draft", "archived"]),
-    category: z.string().nullable().default("unknown"),
-    slug: z.string().nullable(),
+    status: z
+      .enum(["published", "ready", "draft", "archived", "unknown"])
+      .catch("unknown"),
+    category: z
+      .enum([
+        "domestic",
+        "industrial",
+        "agricultural",
+        "construction",
+        "unknown",
+      ])
+      .catch("unknown"),
+    slug: z.string(),
     characteristics: z.string().default(""),
-    image: reference("images").nullable(),
-    projects: z.array(reference("projects")).default([]),
-    point: z
-      .any()
-      .optional()
-      .transform((val) => val as Point),
-    blob: z
-      .any()
-      .optional()
-      .transform((val) => val as Polygon),
+    image_ref: reference("images").nullable(),
+    project_refs: z.array(reference("projects")).default([]),
+    point: z.any().transform((val) => val as Point),
+    blob: z.any().transform((val) => val as Polygon),
     order: z.number().int(),
   }),
 });
@@ -63,7 +74,7 @@ const projects = defineCollection({
   loader: directusLoader({
     command: (lastModified) =>
       readItems("project", {
-        fields: ["*"],
+        fields: ["*", "images.directus_files_id", "waste.waste_id"],
         filter: {
           _or: [
             { date_created: { _gte: lastModified } },
@@ -74,8 +85,8 @@ const projects = defineCollection({
     map: (project) => {
       return {
         ...project,
-        images: idsToString(project.images),
-        wastes: idsToString(project.wastes),
+        image_refs: project.images.map((img) => img.directus_files_id),
+        waste_refs: project.waste.map((w) => String(w.waste_id)),
       };
     },
   }),
@@ -84,8 +95,8 @@ const projects = defineCollection({
     status: z.string(),
     name: z.string(),
     description: z.string().optional(),
-    images: z.array(reference("images")).default([]),
-    wastes: z.array(reference("wastes")).default([]),
+    image_refs: z.array(reference("images")).default([]),
+    waste_refs: z.array(reference("wastes")).default([]),
   }),
 });
 
@@ -102,10 +113,14 @@ const images = defineCollection({
           ],
         },
       }),
-    map: (file) => file,
+    map: (img) => ({
+      ...img,
+      url: getAssetUrl(img.id),
+    }),
   }),
   schema: z.object({
     id: z.string(),
+    url: z.string(),
     filename_disk: z.string().nullish(),
     filename_download: z.string(),
     title: z.string().nullish(),

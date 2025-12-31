@@ -1,0 +1,49 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getAssetUrl } from "../../lib/directus";
+import { Image } from "astro:assets";
+import { categoryColors } from "../../lib/constants";
+
+interface Props {
+    wasteData: CollectionEntry<"wastes">["data"];
+}
+
+const { wasteData } = Astro.props;
+
+const colours = categoryColors[wasteData.category];
+---
+
+<li
+    class="item"
+    data-id={wasteData.id}
+    data-name={wasteData.name}
+    data-loc={wasteData.location}
+    data-char={wasteData.characteristics}
+    data-cat={wasteData.category}
+    data-order={wasteData.order}
+>
+    <a href={`/waste/${wasteData.slug}`}>
+        <div class="img-wrap">
+            {
+                wasteData.image_ref != null ? (
+                    <Image
+                        src={getAssetUrl(wasteData.image_ref.id)}
+                        alt=""
+                        width={200}
+                        height={200}
+                        fit="cover"
+                        style={`background-color: ${colours.bg}; width: 67px; height: 67px;`}
+                    />
+                ) : (
+                    <div
+                        style={`background-color: ${colours.bg}; width: 67px; height: 67px;`}
+                    />
+                )
+            }
+        </div>
+        <div class="desc">
+            <span class="name">{wasteData.name}</span>
+            <span class="loc">{wasteData.location}</span>
+        </div>
+    </a>
+</li>

@@ -4,18 +4,6 @@ import maplibre from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import createFuzzySearch from "@nozbe/microfuzz";
 
-import {
-  bbox,
-  pointGrid,
-  polygonSmooth,
-  explode,
-  polygonToLine,
-  lineChunk,
-  polygon,
-} from "@turf/turf";
-
-import type { Polygon, Position, Point } from "geojson";
-
 // Add types for the global window object
 declare global {
   interface Window {

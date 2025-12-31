@@ -5,11 +5,12 @@ import {
   type RestCommand,
 } from "@directus/sdk";
 import type { Loader } from "astro/loaders";
+import { DIRECTUS_URL, DIRECTUS_TOKEN } from "astro:env/server";
 
-let directus = createDirectus(import.meta.env.DIRECTUS_URL).with(rest());
+let directus = createDirectus(DIRECTUS_URL).with(rest());
 
-if (import.meta.env.DIRECTUS_TOKEN) {
-  directus = directus.with(staticToken(import.meta.env.DIRECTUS_TOKEN));
+if (DIRECTUS_TOKEN) {
+  directus = directus.with(staticToken(DIRECTUS_TOKEN));
 } else {
   console.warn("no DIRECTUS_TOKEN defined, using public access policy");
 }
@@ -37,7 +38,8 @@ export function directusLoader<U extends Obj>(options: {
 
       const items = await directus
         .request(options.command(lastModified))
-        .then((items) => items.map(options.map));
+        .then((items) => items.map(options.map))
+        .then((items) => items.filter((item) => item !== null));
       for (const item of items) {
         if (!("id" in item)) {
           throw new Error(
@@ -68,4 +70,9 @@ export function idsToString(ids: number[] | null | undefined): string[] {
   }
 
   return ids.map((id) => String(id));
+}
+
+export function getAssetUrl(id: string | null | undefined): string {
+  if (!id) return "https://placehold.co/600x400";
+  return `${DIRECTUS_URL}/assets/${id}`;
 }

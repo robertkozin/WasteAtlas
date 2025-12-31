@@ -1,12 +1,4 @@
-import type {
-  Geometry,
-  Point,
-  Polygon,
-  GeometryCollection,
-  GeoJSON,
-} from "geojson";
-
-import { coordReduce } from "@turf/turf";
+import type { Geometry, Point, Polygon, GeometryCollection } from "geojson";
 
 export function isPoint(geometry: Geometry): geometry is Point {
   return geometry.type === "Point";
@@ -38,16 +30,4 @@ export function findPolygon(geo: Geometry): Polygon | undefined {
     let poly = geo.geometries.find(isPolygon);
     if (poly) return poly;
   }
-}
-
-export function onlyCoords(geo?: GeoJSON): number[][] {
-  if (!geo) return [];
-  return coordReduce(
-    geo,
-    (acc, curr) => {
-      acc.push(curr);
-      return acc;
-    },
-    [] as number[][],
-  );
 }

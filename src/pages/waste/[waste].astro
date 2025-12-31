@@ -1,0 +1,27 @@
+---
+import { getCollection, getEntries, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import WastePage from "../../components/waste/WastePage.astro";
+
+export async function getStaticPaths() {
+    const wastes = await getCollection("wastes");
+    return wastes.map((waste) => ({
+        params: { waste: waste.data.slug },
+        props: { wasteData: waste.data },
+    }));
+}
+
+interface Props {
+    wasteData: CollectionEntry<"wastes">["data"];
+}
+
+const { wasteData } = Astro.props;
+
+const projects = await getEntries(wasteData.project_refs).then((ps) =>
+    ps.map((p) => p.data),
+);
+---
+
+<BaseLayout title={`${wasteData.name} - ${wasteData.location}`}>
+    <WastePage wasteData={wasteData} projects={projects} />
+</BaseLayout>

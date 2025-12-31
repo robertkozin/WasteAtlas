@@ -26,6 +26,10 @@ export default defineConfig({
     },
   },
 
+  image: {
+    domains: ["directus.thewasteatlas.com", "placehold.co"],
+  },
+
   experimental: {
     fonts: [
       {

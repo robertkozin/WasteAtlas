@@ -1,13 +1,12 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import WastePanelItem from "./WastePanelItem.astro";
 
 interface Props {
-    wastes: CollectionEntry<"wastes">[];
+    wastes: CollectionEntry<"wastes">["data"][];
 }
 
-const DIRECTUS_URL = import.meta.env.DIRECTUS_URL;
-
-const wastes = Astro.props.wastes.map((waste) => waste.data);
+const { wastes } = Astro.props;
 ---
 
 <style is:global>
@@ -173,39 +172,8 @@ const wastes = Astro.props.wastes.map((waste) => waste.data);
         <div style="overflow: hidden; padding-left: 12px; border-radius: 30px;">
             <ul>
                 {
-                    wastes.map((waste) => (
-                        <li
-                            class="item"
-                            data-id={waste.id}
-                            data-slug={waste.slug}
-                            data-image={waste.image}
-                            data-name={waste.name}
-                            data-loc={waste.location}
-                            data-char={waste.characteristics}
-                            data-cat={waste.category}
-                            data-order={waste.order}
-                        >
-                            <a href={`/waste/${waste.slug}`}>
-                                <div class="img-wrap">
-                                    {waste.image ? (
-                                        <img
-                                            src={`${DIRECTUS_URL}/assets/${waste.image}?width=200&height=200&fit=cover`}
-                                            width="67"
-                                            height="67"
-                                            style={`background-color: ${waste.colour}`}
-                                        />
-                                    ) : (
-                                        <div
-                                            style={`background-color: ${waste.colour}; width: 67px; height: 67px;`}
-                                        />
-                                    )}
-                                </div>
-                                <div class="desc">
-                                    <span class="name">{waste.name}</span>
-                                    <span class="loc">{waste.location}</span>
-                                </div>
-                            </a>
-                        </li>
+                    wastes.map((wasteData) => (
+                        <WastePanelItem wasteData={wasteData} />
                     ))
                 }
             </ul>
