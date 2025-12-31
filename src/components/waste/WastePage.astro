@@ -37,7 +37,7 @@ const colours = categoryColors[wasteData.category];
       <Image
         class="ml-auto h-0 min-h-full object-contain"
         alt=""
-        src={getAssetUrl(wasteData.image_ref?.id)}
+        src={wasteData.image_url ?? ""}
         inferSize
       />
     </div>

@@ -57,21 +57,6 @@ export function directusLoader<U extends Obj>(options: {
   };
 }
 
-export function idToString(id: number | null | undefined): string | null {
-  if (id == null || id == undefined) {
-    return null;
-  }
-  return String(id);
-}
-
-export function idsToString(ids: number[] | null | undefined): string[] {
-  if (ids == null || ids == undefined) {
-    return [];
-  }
-
-  return ids.map((id) => String(id));
-}
-
 export function getAssetUrl(id: string | null | undefined): string {
   if (!id) return "https://placehold.co/600x400";
   return `${DIRECTUS_URL}/assets/${id}`;

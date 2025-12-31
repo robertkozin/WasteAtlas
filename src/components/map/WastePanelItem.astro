@@ -25,9 +25,9 @@ const colours = categoryColors[wasteData.category];
   <a href={`/waste/${wasteData.slug}`}>
     <div class="img-wrap">
       {
-        wasteData.image_ref != null ? (
+        wasteData.image_url != null ? (
           <Image
-            src={getAssetUrl(wasteData.image_ref.id)}
+            src={wasteData.image_url}
             alt=""
             width={200}
             height={200}

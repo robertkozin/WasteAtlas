@@ -20,12 +20,7 @@ const colours = categoryColors[wasteData.category];
   </h3>
   <div class="flex flex-row gap-10">
     <div class="flex-1">
-      <Image
-        src={getAssetUrl(projectData.image_refs[0].id)}
-        width={800}
-        alt=""
-        inferSize
-      />
+      <Image src={projectData.image_urls[0]} width={800} alt="" inferSize />
     </div>
     <div
       class="desc flex-2"

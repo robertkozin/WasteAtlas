@@ -1,11 +1,6 @@
 import { readFiles, readItems } from "@directus/sdk";
 import { defineCollection, reference, z } from "astro:content";
-import {
-  directusLoader,
-  getAssetUrl,
-  idsToString,
-  idToString,
-} from "./lib/directus";
+import { directusLoader, getAssetUrl } from "./lib/directus";
 
 import { circle, randomPoint } from "@turf/turf";
 import type { Point, Polygon } from "geojson";
@@ -37,10 +32,15 @@ const wastes = defineCollection({
         blob = circle(point, 30).geometry;
       }
 
-      let image_ref = waste.image;
-      let project_refs = waste.projects.map((proj) => String(proj.project_id));
-
-      return { ...waste, image_ref, project_refs, point, blob, order: idx };
+      return {
+        ...waste,
+        image_ref: waste.image,
+        image_url: getAssetUrl(waste.image),
+        project_refs: waste.projects.map((proj) => String(proj.project_id)),
+        point,
+        blob,
+        order: idx,
+      };
     },
   }),
   schema: z.object({
@@ -63,6 +63,7 @@ const wastes = defineCollection({
     slug: z.string(),
     characteristics: z.string().default(""),
     image_ref: reference("images").nullable(),
+    image_url: z.string().nullable(),
     project_refs: z.array(reference("projects")).default([]),
     point: z.any().transform((val) => val as Point),
     blob: z.any().transform((val) => val as Polygon),
@@ -86,6 +87,9 @@ const projects = defineCollection({
       return {
         ...project,
         image_refs: project.images.map((img) => img.directus_files_id),
+        image_urls: project.images.map((img) =>
+          getAssetUrl(img.directus_files_id),
+        ),
         waste_refs: project.waste.map((w) => String(w.waste_id)),
       };
     },
@@ -96,6 +100,7 @@ const projects = defineCollection({
     name: z.string(),
     description: z.string().optional(),
     image_refs: z.array(reference("images")).default([]),
+    image_urls: z.array(z.string()).default([]),
     waste_refs: z.array(reference("wastes")).default([]),
   }),
 });
