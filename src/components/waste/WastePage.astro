@@ -1,20 +1,20 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import { Image } from "astro:assets";
-import { getAssetUrl } from "../../lib/directus";
-import WasteProject from "./WasteProject.astro";
+import type { CollectionEntry } from "astro:content"
+import { Image } from "astro:assets"
+import { getAssetUrl } from "../../lib/directus"
+import WasteProject from "./WasteProject.astro"
 
-import "./waste.css";
-import { categoryColors } from "../../lib/constants";
+import "./waste.css"
+import { categoryColors } from "../../lib/constants"
 
 interface Props {
-  wasteData: CollectionEntry<"wastes">["data"];
-  projects: CollectionEntry<"projects">["data"][];
+  wasteData: CollectionEntry<"wastes">["data"]
+  projects: CollectionEntry<"projects">["data"][]
 }
 
-const { wasteData, projects } = Astro.props;
+const { wasteData, projects } = Astro.props
 
-const colours = categoryColors[wasteData.category];
+const colours = categoryColors[wasteData.category]
 ---
 
 <main>
@@ -34,31 +34,17 @@ const colours = categoryColors[wasteData.category];
     </div>
 
     <div class="flex-4">
-      <Image
-        class="ml-auto h-0 min-h-full object-contain"
-        alt=""
-        src={wasteData.image_url ?? ""}
-        inferSize
-      />
+      <Image class="ml-auto h-0 min-h-full object-contain" alt="" src={wasteData.image_url ?? ""} inferSize />
     </div>
   </section>
 
-  <section
-    class="projects flex flex-col gap-10 p-10"
-    style={`background: ${colours.banner}b3`}
-  >
-    {
-      projects.map((project) => (
-        <WasteProject wasteData={wasteData} projectData={project} />
-      ))
-    }
+  <section class="projects flex flex-col gap-10 p-10" style={`background: ${colours.banner}b3`}>
+    {projects.map(project => <WasteProject wasteData={wasteData} projectData={project} />)}
   </section>
 
   <div class="banner-wrap">
     <div class="banner">
-      <span>{wasteData.characteristics}</span><span
-        >{wasteData.characteristics}</span
-      >
+      <span>{wasteData.characteristics}</span><span>{wasteData.characteristics}</span>
     </div>
   </div>
 </main>

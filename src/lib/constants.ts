@@ -1,6 +1,6 @@
-import type { CollectionEntry } from "astro:content";
+import type { CollectionEntry } from "astro:content"
 
-type Category = CollectionEntry<"wastes">["data"]["category"];
+type Category = CollectionEntry<"wastes">["data"]["category"]
 
 export const categoryColors = {
   domestic: {
@@ -28,7 +28,4 @@ export const categoryColors = {
     banner: "#C084FC",
     bg: "#C084FC",
   },
-} as const satisfies Record<
-  Category,
-  { sub: string; banner: string; bg: string }
->;
+} as const satisfies Record<Category, { sub: string; banner: string; bg: string }>

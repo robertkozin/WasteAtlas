@@ -1,17 +1,17 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import { getAssetUrl } from "../../lib/directus";
-import { Image } from "astro:assets";
-import { categoryColors } from "../../lib/constants";
+import type { CollectionEntry } from "astro:content"
+import { getAssetUrl } from "../../lib/directus"
+import { Image } from "astro:assets"
+import { categoryColors } from "../../lib/constants"
 
 interface Props {
-  projectData: CollectionEntry<"projects">["data"];
-  wasteData: CollectionEntry<"wastes">["data"];
+  projectData: CollectionEntry<"projects">["data"]
+  wasteData: CollectionEntry<"wastes">["data"]
 }
 
-const { projectData, wasteData } = Astro.props;
+const { projectData, wasteData } = Astro.props
 
-const colours = categoryColors[wasteData.category];
+const colours = categoryColors[wasteData.category]
 ---
 
 <div class="project">
@@ -22,10 +22,6 @@ const colours = categoryColors[wasteData.category];
     <div class="flex-1">
       <Image src={projectData.image_urls[0]} width={800} alt="" inferSize />
     </div>
-    <div
-      class="desc flex-2"
-      style={`background: ${colours.banner}`}
-      set:html={projectData.description}
-    />
+    <div class="desc flex-2" style={`background: ${colours.banner}`} set:html={projectData.description} />
   </div>
 </div>

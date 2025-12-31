@@ -34,6 +34,11 @@
     "typescript": "^5.8.3"
   },
   "prettier": {
+    "printWidth": 120,
+    "bracketSameLine": true,
+    "tabWidth": 2,
+    "semi": false,
+    "arrowParens": "avoid",
     "plugins": [
       "prettier-plugin-astro",
       "prettier-plugin-tailwindcss"

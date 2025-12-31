@@ -1,18 +1,18 @@
 ---
-import TitlePanel from "./TitlePanel.astro";
-import ContributePanel from "./ContributePanel.astro";
-import LayerPanel from "./LayerPanel.astro";
-import WastePanel from "./WastePanel.astro";
+import TitlePanel from "./TitlePanel.astro"
+import ContributePanel from "./ContributePanel.astro"
+import LayerPanel from "./LayerPanel.astro"
+import WastePanel from "./WastePanel.astro"
 
-import type { CollectionEntry } from "astro:content";
+import type { CollectionEntry } from "astro:content"
 
-import "./map.css";
+import "./map.css"
 
 interface Props {
-  wastes: CollectionEntry<"wastes">["data"][];
+  wastes: CollectionEntry<"wastes">["data"][]
 }
 
-const { wastes } = Astro.props;
+const { wastes } = Astro.props
 ---
 
 <main class="h-full">

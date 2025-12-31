@@ -1,18 +1,17 @@
 //import maplibre from "maplibre-gl";
-import maplibre from "mapbox-gl";
+import maplibre from "mapbox-gl"
 //import "maplibre-gl/dist/maplibre-gl.css";
-import "mapbox-gl/dist/mapbox-gl.css";
-import createFuzzySearch from "@nozbe/microfuzz";
+import "mapbox-gl/dist/mapbox-gl.css"
+import createFuzzySearch from "@nozbe/microfuzz"
 
 // Add types for the global window object
 declare global {
   interface Window {
-    mapInstance: maplibre.Map;
+    mapInstance: maplibre.Map
   }
 }
 
-maplibre.accessToken =
-  "pk.eyJ1Ijoicm9iZXJ0a296aW4iLCJhIjoiY205aXVteWgyMDY0dDJsczZqNGtpbzJqNSJ9.sHenifCidutvMSNZquNWdA";
+maplibre.accessToken = "pk.eyJ1Ijoicm9iZXJ0a296aW4iLCJhIjoiY205aXVteWgyMDY0dDJsczZqNGtpbzJqNSJ9.sHenifCidutvMSNZquNWdA"
 const map = new maplibre.Map({
   container: "map",
   //style: "https://api.maptiler.com/maps/dataviz/style.json?key=bLo8xe0MLrejy29a8JsL",
@@ -30,36 +29,31 @@ const map = new maplibre.Map({
   dragRotate: false,
   dragPan: true,
   touchZoomRotate: false,
-});
+})
 //map.addControl(new maplibre.AttributionControl(), "bottom-left");
 
 // Store map instance globally for filter access
-window.mapInstance = map;
+window.mapInstance = map
 
-let $titlearea = document.querySelector(".title-area");
+let $titlearea = document.querySelector(".title-area")
 map.on("move", () => {
   if ($titlearea?.classList.contains("open")) {
-    $titlearea.classList.remove("open");
+    $titlearea.classList.remove("open")
   }
-});
+})
 
-let heatLayers = [
-  "heatmap_construction",
-  "heatmap_agricultural",
-  "heatmap_domestic",
-  "heatmap_industrial",
-];
+let heatLayers = ["heatmap_construction", "heatmap_agricultural", "heatmap_domestic", "heatmap_industrial"]
 
 map.on("load", () => {
   map.addSource("waste", {
     type: "geojson",
     data: "./data/points.geojson",
-  });
+  })
 
   map.addSource("blobs", {
     type: "geojson",
     data: "./data/blobs.geojson",
-  });
+  })
 
   let rad: maplibre.DataDrivenPropertyValueSpecification<number> = [
     "interpolate",
@@ -69,7 +63,7 @@ map.on("load", () => {
     6,
     8.9,
     190,
-  ];
+  ]
 
   let opacity: maplibre.DataDrivenPropertyValueSpecification<number> = [
     "interpolate",
@@ -79,7 +73,7 @@ map.on("load", () => {
     0.6,
     8,
     0.1,
-  ];
+  ]
 
   function color(hex: string): maplibre.ExpressionSpecification {
     return [
@@ -94,17 +88,17 @@ map.on("load", () => {
       hexa(hex, 1),
       1,
       hexa(hex, 1),
-    ];
+    ]
   }
 
   function rgba(hexa: string): string {
-    hexa = hexa.replace("#", "");
-    let r = parseInt(hexa.substring(0, 2), 16);
-    let g = parseInt(hexa.substring(2, 4), 16);
-    let b = parseInt(hexa.substring(4, 6), 16);
-    let a = parseInt(hexa.substring(6, 8), 16) / 255;
-    a = Math.round(a * 100) / 100;
-    return `rgba(${r}, ${g}, ${b}, ${a})`;
+    hexa = hexa.replace("#", "")
+    let r = parseInt(hexa.substring(0, 2), 16)
+    let g = parseInt(hexa.substring(2, 4), 16)
+    let b = parseInt(hexa.substring(4, 6), 16)
+    let a = parseInt(hexa.substring(6, 8), 16) / 255
+    a = Math.round(a * 100) / 100
+    return `rgba(${r}, ${g}, ${b}, ${a})`
   }
 
   function hexa(hex: string, alpha: number = 1): string {
@@ -113,7 +107,7 @@ map.on("load", () => {
         Math.round(alpha * 255)
           .toString(16)
           .padStart(2, "0"),
-    );
+    )
   }
 
   map.addLayer(
@@ -130,7 +124,7 @@ map.on("load", () => {
       },
     },
     "place_village",
-  );
+  )
 
   map.addLayer(
     {
@@ -146,7 +140,7 @@ map.on("load", () => {
       },
     },
     "place_village",
-  );
+  )
 
   map.addLayer(
     {
@@ -162,7 +156,7 @@ map.on("load", () => {
       },
     },
     "place_village",
-  );
+  )
 
   map.addLayer(
     {
@@ -178,7 +172,7 @@ map.on("load", () => {
       },
     },
     "place_village",
-  );
+  )
 
   map.addLayer({
     id: "waste",
@@ -203,216 +197,204 @@ map.on("load", () => {
       ],
       "circle-opacity": 1,
     },
-  });
+  })
 
-  map.on("click", "waste", (e) => {
-    const feature = e.features[0];
-    const props = feature.properties;
-    const coordinates = feature.geometry.coordinates.slice();
-  });
+  map.on("click", "waste", e => {
+    const feature = e.features[0]
+    const props = feature.properties
+    const coordinates = feature.geometry.coordinates.slice()
+  })
 
   map.on("mouseenter", heatLayers, () => {
-    map.getCanvas().style.cursor = "pointer";
-  });
+    map.getCanvas().style.cursor = "pointer"
+  })
 
   map.on("mouseleave", heatLayers, () => {
-    map.getCanvas().style.cursor = "";
-  });
+    map.getCanvas().style.cursor = ""
+  })
 
-  let $waste = document.querySelector(".waste");
+  let $waste = document.querySelector(".waste")
 
-  let clickHeat = false;
-  map.on("click", (e) => {
+  let clickHeat = false
+  map.on("click", e => {
     const heatmapFeatures = map.queryRenderedFeatures(e.point, {
       layers: heatLayers,
-    });
+    })
 
     if (heatmapFeatures.length === 0) {
       if (clickHeat) {
         if ($waste?.classList.contains("open")) {
-          $waste?.classList.remove("open");
+          $waste?.classList.remove("open")
         }
-        applySearch();
+        applySearch()
       }
-      clickHeat = false;
-      return;
+      clickHeat = false
+      return
     }
 
-    let wasteIds = new Set();
+    let wasteIds = new Set()
     for (const feature of heatmapFeatures) {
-      wasteIds.add(feature.properties.w.toString());
+      wasteIds.add(feature.properties.w.toString())
     }
 
-    if (wasteIds.size === 0) return;
+    if (wasteIds.size === 0) return
 
-    let results = Array.from(
-      document.querySelectorAll<HTMLElement>(".list .item"),
-    ).filter((item) => wasteIds.has(item.dataset.id));
-    let $listul = document.querySelector(".list ul");
+    let results = Array.from(document.querySelectorAll<HTMLElement>(".list .item")).filter(item =>
+      wasteIds.has(item.dataset.id),
+    )
+    let $listul = document.querySelector(".list ul")
 
-    results.forEach((result) => {
-      $listul?.appendChild(result);
-      result.hidden = false;
-    });
+    results.forEach(result => {
+      $listul?.appendChild(result)
+      result.hidden = false
+    })
 
-    let children = $listul.children;
+    let children = $listul.children
     for (let i = 0, n = children.length - results.length; i < n; i++) {
-      children[i].hidden = true;
+      children[i].hidden = true
     }
 
     if (!$waste?.classList.contains("open")) {
-      $waste?.classList.add("open");
+      $waste?.classList.add("open")
     }
 
-    clickHeat = true;
-  });
-});
+    clickHeat = true
+  })
+})
 
-const fuzzySearch = createFuzzySearch(
-  document.querySelectorAll<HTMLElement>(".list .item").values().toArray(),
-  {
-    getText: (e) => [
-      e.dataset.name,
-      e.dataset.loc,
-      e.dataset.char,
-      e.dataset.cat,
-    ],
-  },
-);
+const fuzzySearch = createFuzzySearch(document.querySelectorAll<HTMLElement>(".list .item").values().toArray(), {
+  getText: e => [e.dataset.name, e.dataset.loc, e.dataset.char, e.dataset.cat],
+})
 
-let $waste = document.querySelector(".waste");
-let $list = document.querySelector(".list");
-let $listul = document.querySelector(".list ul");
-let $listitems = document.querySelectorAll<HTMLElement>(".waste .list .item");
-let $listbutton = document.querySelector(".list button");
+let $waste = document.querySelector(".waste")
+let $list = document.querySelector(".list")
+let $listul = document.querySelector(".list ul")
+let $listitems = document.querySelectorAll<HTMLElement>(".waste .list .item")
+let $listbutton = document.querySelector(".list button")
 
-let query = "";
+let query = ""
 
-document.querySelector(".search")?.addEventListener("input", (e) => {
-  query = (e.target as HTMLInputElement).value;
+document.querySelector(".search")?.addEventListener("input", e => {
+  query = (e.target as HTMLInputElement).value
 
   if (!$waste?.classList.contains("open")) {
-    $waste?.classList.add("open");
+    $waste?.classList.add("open")
   }
 
-  applySearch();
-});
+  applySearch()
+})
 
 function applySearch() {
-  let fzz = fuzzySearch(query);
+  let fzz = fuzzySearch(query)
 
-  let results = fzz.filter((result) => result.score <= 3).map((r) => r.item);
+  let results = fzz.filter(result => result.score <= 3).map(r => r.item)
   if (results.length === 0) {
     results = $listitems
       .values()
       .toArray()
       .sort((a, b) => {
-        return parseInt(a.dataset.order) - parseInt(b.dataset.order);
-      });
+        return parseInt(a.dataset.order) - parseInt(b.dataset.order)
+      })
   }
 
   // console.log(...activeFilters);
   if (activeFilters.size > 0) {
     // console.log("results", results)
-    results = results.filter((result) => {
+    results = results.filter(result => {
       // console.log("cat", result.dataset.cat);
-      return activeFilters.has(result.dataset.cat);
-    });
+      return activeFilters.has(result.dataset.cat)
+    })
   }
 
   if (true) {
     //console.log(results);
 
-    results.forEach((result) => {
-      $listul?.appendChild(result);
-      result.hidden = false;
-    });
+    results.forEach(result => {
+      $listul?.appendChild(result)
+      result.hidden = false
+    })
 
-    let children = $listul.children;
+    let children = $listul.children
     for (let i = 0, n = children.length - results.length; i < n; i++) {
-      children[i].hidden = true;
+      children[i].hidden = true
     }
 
-    let ids = results.map((r) => parseInt(r.dataset.id));
+    let ids = results.map(r => parseInt(r.dataset.id))
     // console.log("ids", ids);
 
-    map.setFilter("waste", [
-      "in",
-      ["id"],
-      ["array", "number", ids.length, ["literal", ids]],
-    ]);
+    map.setFilter("waste", ["in", ["id"], ["array", "number", ids.length, ["literal", ids]]])
 
-    heatLayers.forEach((l) => {
+    heatLayers.forEach(l => {
       map.setFilter(l, [
         "all",
         ["==", ["get", "cat"], l.slice(8)],
         ["in", ["get", "w"], ["array", "number", ids.length, ["literal", ids]]],
-      ]);
-    });
+      ])
+    })
   } else {
     // TODO: SORT
-    let q = document.querySelectorAll<HTMLElement>(".waste .list .item");
+    let q = document.querySelectorAll<HTMLElement>(".waste .list .item")
     let els = q
       .values()
       .toArray()
       .sort((a, b) => {
-        return parseInt(a.dataset.order) - parseInt(b.dataset.order);
-      });
-    els?.forEach((el) => {
-      $listul?.appendChild(el);
-      el.hidden = false;
-    });
-    map.setFilter("waste", null);
-    heatLayers.forEach((l) => {
-      map.setFilter(l, ["==", ["get", "cat"], l.slice(8)]);
-    });
+        return parseInt(a.dataset.order) - parseInt(b.dataset.order)
+      })
+    els?.forEach(el => {
+      $listul?.appendChild(el)
+      el.hidden = false
+    })
+    map.setFilter("waste", null)
+    heatLayers.forEach(l => {
+      map.setFilter(l, ["==", ["get", "cat"], l.slice(8)])
+    })
   }
 }
 
 // Filter functionality
-const $filterButtons = document.querySelectorAll(".filter button");
-const activeFilters = new Set(); // Track active category filters
+const $filterButtons = document.querySelectorAll(".filter button")
+const activeFilters = new Set() // Track active category filters
 
 // Add click event listeners to filter buttons
-$filterButtons.forEach((button) => {
+$filterButtons.forEach(button => {
   button.addEventListener("click", () => {
-    const category = button.getAttribute("data-category");
+    const category = button.getAttribute("data-category")
     if (!category) {
-      return;
+      return
     }
 
     // Toggle active state
     if (button.classList.contains("active")) {
-      button.classList.remove("active");
-      activeFilters.delete(category);
+      button.classList.remove("active")
+      activeFilters.delete(category)
     } else {
-      button.classList.add("active");
-      activeFilters.add(category);
+      button.classList.add("active")
+      activeFilters.add(category)
     }
 
-    applySearch();
-  });
-});
+    applySearch()
+  })
+})
 
 // The welcome box functionality
-let ack = window.localStorage.getItem("ack");
-let ackAt = parseInt(ack || "0") || 0;
-let nowSeconds = Date.now() / 1000;
-let monthSeconds = 60 * 60 * 24 * 30;
+let ack = window.localStorage.getItem("ack")
+let ackAt = parseInt(ack || "0") || 0
+let nowSeconds = Date.now() / 1000
+let monthSeconds = 60 * 60 * 24 * 30
 if (ackAt + monthSeconds < nowSeconds) {
-  document.querySelector(".title-area")?.classList.add("open");
-  window.localStorage.setItem("ack", Date.now().toString());
+  document.querySelector(".title-area")?.classList.add("open")
+  window.localStorage.setItem("ack", Date.now().toString())
 }
 
 // Generic functionality to make toggleable elements
-document.querySelectorAll<HTMLElement>("[data-open]").forEach((el) => {
-  let targetEl = document.querySelector(el.dataset.open);
+document.querySelectorAll<HTMLElement>("[data-open]").forEach(el => {
+  let targetEl = document.querySelector(el.dataset.open)
 
-  el.addEventListener("click", (ev) => {
+  el.addEventListener("click", ev => {
     if (targetEl instanceof HTMLDialogElement) {
-      targetEl.open ? targetEl.close() : targetEl.showModal();
+      targetEl.open ? targetEl.close() : targetEl.showModal()
     } else {
-      targetEl?.classList.toggle("open");
+      targetEl?.classList.toggle("open")
     }
-  });
-});
+  })
+})

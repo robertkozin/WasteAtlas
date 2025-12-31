@@ -1,7 +1,7 @@
 // @ts-check
-import { defineConfig, fontProviders, envField } from "astro/config";
+import { defineConfig, fontProviders, envField } from "astro/config"
 
-import tailwindcss from "@tailwindcss/vite";
+import tailwindcss from "@tailwindcss/vite"
 
 // https://astro.build/config
 export default defineConfig({
@@ -49,13 +49,7 @@ export default defineConfig({
         provider: "local",
         name: "Erode",
         cssVariable: "--font-erode",
-        fallbacks: [
-          "Charter",
-          "Bitstream Charter",
-          "Sitka Text",
-          "Cambria",
-          "serif",
-        ],
+        fallbacks: ["Charter", "Bitstream Charter", "Sitka Text", "Cambria", "serif"],
         variants: [
           {
             weight: "100 900",
@@ -74,4 +68,4 @@ export default defineConfig({
     },
     plugins: [tailwindcss()],
   },
-});
+})

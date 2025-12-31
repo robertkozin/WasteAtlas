@@ -1,16 +1,16 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import { getAssetUrl } from "../../lib/directus";
-import { Image } from "astro:assets";
-import { categoryColors } from "../../lib/constants";
+import type { CollectionEntry } from "astro:content"
+import { getAssetUrl } from "../../lib/directus"
+import { Image } from "astro:assets"
+import { categoryColors } from "../../lib/constants"
 
 interface Props {
-  wasteData: CollectionEntry<"wastes">["data"];
+  wasteData: CollectionEntry<"wastes">["data"]
 }
 
-const { wasteData } = Astro.props;
+const { wasteData } = Astro.props
 
-const colours = categoryColors[wasteData.category];
+const colours = categoryColors[wasteData.category]
 ---
 
 <li
@@ -20,8 +20,7 @@ const colours = categoryColors[wasteData.category];
   data-loc={wasteData.location}
   data-char={wasteData.characteristics}
   data-cat={wasteData.category}
-  data-order={wasteData.order}
->
+  data-order={wasteData.order}>
   <a href={`/waste/${wasteData.slug}`}>
     <div class="img-wrap">
       {
@@ -35,9 +34,7 @@ const colours = categoryColors[wasteData.category];
             style={`background-color: ${colours.bg}; width: 67px; height: 67px;`}
           />
         ) : (
-          <div
-            style={`background-color: ${colours.bg}; width: 67px; height: 67px;`}
-          />
+          <div style={`background-color: ${colours.bg}; width: 67px; height: 67px;`} />
         )
       }
     </div>
