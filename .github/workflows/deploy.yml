@@ -2,7 +2,7 @@ name: Deploy Astro site to Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -23,8 +23,8 @@ jobs:
       - name: Install, build, and upload
         uses: withastro/action@v3
         env:
-            DIRECTUS_TOKEN: ${{ secrets.DIRECTUS_TOKEN }}
-            DIRECTUS_URL: "https://directus.thewasteatlas.com"
+          DIRECTUS_TOKEN: ${{ secrets.DIRECTUS_TOKEN }}
+          DIRECTUS_URL: "https://directus.thewasteatlas.com"
 
   deploy:
     needs: build

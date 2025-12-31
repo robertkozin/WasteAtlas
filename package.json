@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "sync": "astro sync",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "format": "prettier . --write"
   },
   "license": "MIT",
   "packageManager": "bun@1.3.3",
@@ -24,9 +25,26 @@
   },
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "prettier": "^3.7.4",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-tailwindcss": "^0.7.2"
   },
   "peerDependencies": {
     "typescript": "^5.8.3"
+  },
+  "prettier": {
+    "plugins": [
+      "prettier-plugin-astro",
+      "prettier-plugin-tailwindcss"
+    ],
+    "overrides": [
+      {
+        "files": "*.astro",
+        "options": {
+          "parser": "astro"
+        }
+      }
+    ]
   }
 }

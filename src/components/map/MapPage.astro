@@ -9,22 +9,22 @@ import type { CollectionEntry } from "astro:content";
 import "./map.css";
 
 interface Props {
-    wastes: CollectionEntry<"wastes">["data"][];
+  wastes: CollectionEntry<"wastes">["data"][];
 }
 
 const { wastes } = Astro.props;
 ---
 
 <main class="h-full">
-    <TitlePanel />
+  <TitlePanel />
 
-    <ContributePanel />
+  <ContributePanel />
 
-    <WastePanel wastes={wastes} />
+  <WastePanel wastes={wastes} />
 
-    <LayerPanel />
+  <LayerPanel />
 
-    <div id="map"></div>
+  <div id="map"></div>
 
-    <script src="./map.ts"></script>
+  <script src="./map.ts"></script>
 </main>

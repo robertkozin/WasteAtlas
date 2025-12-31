@@ -6,16 +6,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 const isProd = import.meta.env.PROD;
 
 let wasteCol = await getCollection("wastes", (waste) => {
-    if (isProd) {
-        const isReady = ["ready", "published"].includes(waste.data.status);
-        return isReady;
-    } else {
-        return true;
-    }
+  if (isProd) {
+    const isReady = ["ready", "published"].includes(waste.data.status);
+    return isReady;
+  } else {
+    return true;
+  }
 });
 let wastes = wasteCol.map((w) => w.data);
 ---
 
 <BaseLayout title="Waste Atlas">
-    <MapPage wastes={wastes} />
+  <MapPage wastes={wastes} />
 </BaseLayout>

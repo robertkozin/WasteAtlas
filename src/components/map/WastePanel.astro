@@ -3,180 +3,176 @@ import type { CollectionEntry } from "astro:content";
 import WastePanelItem from "./WastePanelItem.astro";
 
 interface Props {
-    wastes: CollectionEntry<"wastes">["data"][];
+  wastes: CollectionEntry<"wastes">["data"][];
 }
 
 const { wastes } = Astro.props;
 ---
 
 <style is:global>
-    .list {
-        position: absolute;
-        top: 85px;
-        right: 10px;
-        border-radius: 30px;
-        /* padding: 0 0 0 12px; */
-    }
+  .list {
+    position: absolute;
+    top: 85px;
+    right: 10px;
+    border-radius: 30px;
+    /* padding: 0 0 0 12px; */
+  }
 
-    .list ul::-webkit-scrollbar-thumb {
-        background-color: #d9d9d9;
-        border: 4px solid transparent;
-        border-radius: 8px;
-        background-clip: padding-box;
-    }
+  .list ul::-webkit-scrollbar-thumb {
+    background-color: #d9d9d9;
+    border: 4px solid transparent;
+    border-radius: 8px;
+    background-clip: padding-box;
+  }
 
-    .list ul::-webkit-scrollbar {
-        width: 16px;
-    }
+  .list ul::-webkit-scrollbar {
+    width: 16px;
+  }
 
-    .list ul {
-        height: 500px;
+  .list ul {
+    height: 500px;
 
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-        list-style: none;
-        padding: 10px 0 10px 0;
-        margin: 0;
-        overflow-y: scroll;
-    }
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    list-style: none;
+    padding: 10px 0 10px 0;
+    margin: 0;
+    overflow-y: scroll;
+  }
 
-    .waste.open .list {
-        width: 340px;
-    }
+  .waste.open .list {
+    width: 340px;
+  }
 
-    .waste.open .list .desc {
-        display: flex;
-        flex-direction: column;
-    }
+  .waste.open .list .desc {
+    display: flex;
+    flex-direction: column;
+  }
 
-    .waste .img-wrap {
-        flex-shrink: 0;
-    }
+  .waste .img-wrap {
+    flex-shrink: 0;
+  }
 
-    .list .item a {
-        background-color: #d9d9d9;
-        border-radius: 30px;
-        padding: 12px;
-        list-style-type: none;
-        display: flex;
-        gap: 10px;
-        color: black;
-        align-items: center;
-    }
+  .list .item a {
+    background-color: #d9d9d9;
+    border-radius: 30px;
+    padding: 12px;
+    list-style-type: none;
+    display: flex;
+    gap: 10px;
+    color: black;
+    align-items: center;
+  }
 
-    .list .desc {
-        display: none;
-    }
+  .list .desc {
+    display: none;
+  }
 
-    .list button {
-        position: absolute;
-        left: -20px;
-        top: -20px;
-        border-radius: 100px;
-        width: 30px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+  .list button {
+    position: absolute;
+    left: -20px;
+    top: -20px;
+    border-radius: 100px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-    .list ul img {
-        /* border-radius: 20px; */
-    }
+  .list ul img {
+    /* border-radius: 20px; */
+  }
 
-    .search {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 22px;
-        border-radius: 30px;
-        padding: 12px;
-        outline: none;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 12px;
-        color: #d9d9d9;
-    }
+  .search {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 22px;
+    border-radius: 30px;
+    padding: 12px;
+    outline: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    color: #d9d9d9;
+  }
 
-    .waste.open .search {
-        padding: 10px 22px 10px 12px;
-        width: 340px;
-    }
+  .waste.open .search {
+    padding: 10px 22px 10px 12px;
+    width: 340px;
+  }
 
-    .search > button {
-        background: none;
-        border: none;
-        padding: 0;
-        margin: 0;
-        color: #d9d9d9;
-        cursor: pointer;
-    }
+  .search > button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: #d9d9d9;
+    cursor: pointer;
+  }
 
-    .search > input {
-        display: none;
-        background: none;
-        border: none;
-        border-bottom: 1px solid #d9d9d9;
-        color: white;
-        flex-grow: 1;
-    }
+  .search > input {
+    display: none;
+    background: none;
+    border: none;
+    border-bottom: 1px solid #d9d9d9;
+    color: white;
+    flex-grow: 1;
+  }
 
-    .waste.open > .search > input {
-        display: block;
-    }
+  .waste.open > .search > input {
+    display: block;
+  }
 
-    .waste > .search > input {
-    }
+  .waste > .search > input {
+  }
 
-    .waste a {
-        color: inherit;
-        text-decoration: inherit;
-    }
+  .waste a {
+    color: inherit;
+    text-decoration: inherit;
+  }
 
-    .waste .desc .name {
-        font-weight: 300;
-        text-transform: uppercase;
-        font-family: var(--font-switzer);
-        font-size: 20px;
-    }
+  .waste .desc .name {
+    font-weight: 300;
+    text-transform: uppercase;
+    font-family: var(--font-switzer);
+    font-size: 20px;
+  }
 
-    .waste .desc .loc {
-        font-family: var(--font-erode);
-        font-size: 14px;
-    }
+  .waste .desc .loc {
+    font-family: var(--font-erode);
+    font-size: 14px;
+  }
 </style>
 
 <div class="waste">
-    <div class="search panel">
-        <button data-open=".waste">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="28"
-                height="28"
-                fill="currentColor"
-                viewBox="0 0 16 16"
-            >
-                <path
-                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
-                ></path>
-            </svg></button
-        >
+  <div class="search panel">
+    <button data-open=".waste">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="28"
+        height="28"
+        fill="currentColor"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
+        ></path>
+      </svg></button
+    >
 
-        <input role="searchbox" />
+    <input role="searchbox" />
+  </div>
+
+  <section class="list panel">
+    <button class="panel text-3xl font-light" data-open=".waste">+</button>
+    <div style="overflow: hidden; padding-left: 12px; border-radius: 30px;">
+      <ul>
+        {wastes.map((wasteData) => <WastePanelItem wasteData={wasteData} />)}
+      </ul>
     </div>
-
-    <section class="list panel">
-        <button class="panel font-light text-3xl" data-open=".waste">+</button>
-        <div style="overflow: hidden; padding-left: 12px; border-radius: 30px;">
-            <ul>
-                {
-                    wastes.map((wasteData) => (
-                        <WastePanelItem wasteData={wasteData} />
-                    ))
-                }
-            </ul>
-        </div>
-    </section>
+  </section>
 </div>

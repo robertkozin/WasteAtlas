@@ -8,8 +8,8 @@ import "./waste.css";
 import { categoryColors } from "../../lib/constants";
 
 interface Props {
-    wasteData: CollectionEntry<"wastes">["data"];
-    projects: CollectionEntry<"projects">["data"][];
+  wasteData: CollectionEntry<"wastes">["data"];
+  projects: CollectionEntry<"projects">["data"][];
 }
 
 const { wasteData, projects } = Astro.props;
@@ -18,47 +18,47 @@ const colours = categoryColors[wasteData.category];
 ---
 
 <main>
-    <section class="flex flex-row p-5 gap-2 pb-12">
-        <div class="flex-6">
-            <h1>{wasteData.name}</h1>
-            <h2 style={`color: ${colours.sub}`}>
-                {wasteData.location}
-            </h2>
+  <section class="flex flex-row gap-2 p-5 pb-12">
+    <div class="flex-6">
+      <h1>{wasteData.name}</h1>
+      <h2 style={`color: ${colours.sub}`}>
+        {wasteData.location}
+      </h2>
 
-            <dl class="mt-1">
-                <dt>Type of waste</dt>
-                <dd class="capitalize">{wasteData.category}</dd>
-            </dl>
+      <dl class="mt-1">
+        <dt>Type of waste</dt>
+        <dd class="capitalize">{wasteData.category}</dd>
+      </dl>
 
-            <p class="mt-3">{wasteData.description}</p>
-        </div>
-
-        <div class="flex-4">
-            <Image
-                class="h-0 ml-auto min-h-full object-contain"
-                alt=""
-                src={getAssetUrl(wasteData.image_ref?.id)}
-                inferSize
-            />
-        </div>
-    </section>
-
-    <section
-        class="projects p-10 flex flex-col gap-10"
-        style={`background: ${colours.banner}b3`}
-    >
-        {
-            projects.map((project) => (
-                <WasteProject wasteData={wasteData} projectData={project} />
-            ))
-        }
-    </section>
-
-    <div class="banner-wrap">
-        <div class="banner">
-            <span>{wasteData.characteristics}</span><span
-                >{wasteData.characteristics}</span
-            >
-        </div>
+      <p class="mt-3">{wasteData.description}</p>
     </div>
+
+    <div class="flex-4">
+      <Image
+        class="ml-auto h-0 min-h-full object-contain"
+        alt=""
+        src={getAssetUrl(wasteData.image_ref?.id)}
+        inferSize
+      />
+    </div>
+  </section>
+
+  <section
+    class="projects flex flex-col gap-10 p-10"
+    style={`background: ${colours.banner}b3`}
+  >
+    {
+      projects.map((project) => (
+        <WasteProject wasteData={wasteData} projectData={project} />
+      ))
+    }
+  </section>
+
+  <div class="banner-wrap">
+    <div class="banner">
+      <span>{wasteData.characteristics}</span><span
+        >{wasteData.characteristics}</span
+      >
+    </div>
+  </div>
 </main>
