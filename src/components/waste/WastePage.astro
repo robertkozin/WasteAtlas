@@ -21,7 +21,8 @@ const colours = categoryColors[wasteData.category]
   <section class="flex flex-row gap-2 p-5 pb-12">
     <div class="flex-6">
       <h1>{wasteData.name}</h1>
-      <h2 style={`color: ${colours.sub}`}>
+      <h2 style={`color: ${colours.sub}`}> 
+        <!-- eso es js^^ los colores se meten de forma dinámica luego no se hace con css para evitar 3mil clases -->
         {wasteData.location}
       </h2>
 

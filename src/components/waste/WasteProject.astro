@@ -22,6 +22,10 @@ const colours = categoryColors[wasteData.category]
     <div class="flex-1">
       <Image src={projectData.image_urls[0]} width={800} alt="" inferSize />
     </div>
-    <div class="desc flex-2" style={`background: ${colours.banner}`} set:html={projectData.description} />
+    <div class="desc flex-2" style={`background: ${colours.banner}`} set:html={projectData.description}> 
+      <!-- se busca en el proyecto la descripción y la incluye en el div. 
+       además /esto NOS DA IGUAL/como el lenguaje del que viene es html y lo vamos a meter en html 
+       hay que ponerlo según set:html en vez de solo entre{}-->
+    </div>
   </div>
 </div>
