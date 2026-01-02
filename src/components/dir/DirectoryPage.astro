@@ -9,8 +9,9 @@ interface Props {
 
 const { wastes } = Astro.props
 ---
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
 <h1>Hello World</h1>
-<button onclick="filter()">click</button>
+<button onclick="applyfilter()">click</button>
 <ul>
     {
         wastes.map (waste=> <DirectoryItem waste={waste} />)
