@@ -1,0 +1,23 @@
+---
+
+import type { CollectionEntry } from "astro:content"
+import DirectoryItem from "./DirectoryItem.astro"
+
+interface Props {
+  wastes: CollectionEntry<"wastes">["data"][]
+}
+
+const { wastes } = Astro.props
+---
+<h1>Hello World</h1>
+<button onclick="filter()">click</button>
+<ul>
+    {
+        wastes.map (waste=> <DirectoryItem waste={waste} />)
+
+    }
+</ul>
+
+<script src="./dir.js" >
+    
+</script>

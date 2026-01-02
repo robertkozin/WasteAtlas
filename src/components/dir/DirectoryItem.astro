@@ -1,0 +1,10 @@
+---
+import type { CollectionEntry } from "astro:content"
+
+interface Props {
+  waste: CollectionEntry<"wastes">["data"]
+}
+
+const { waste } = Astro.props
+---
+<li class="item">Hello World {waste.name}-{waste.location}</li>

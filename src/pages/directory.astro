@@ -1,0 +1,23 @@
+---
+import { getCollection } from "astro:content"
+import BaseLayout from "../layouts/BaseLayout.astro"
+import DirectoryPage from "@components/dir/DirectoryPage.astro"
+
+const isProd = import.meta.env.PROD
+
+let wasteCol = await getCollection("wastes", waste => { 
+    // coger los residuos de la database y poniendolo en una viariable
+  if (isProd) {
+    const isReady = ["ready", "published"].includes(waste.data.status)
+    return isReady
+  } else {
+    return true
+  }
+})
+let wastes = wasteCol.map(w => w.data)
+---
+
+<BaseLayout title="Waste Atlas Directory">
+  <DirectoryPage wastes={wastes} />
+  <!-- aquí se pasa la info de la database a la página de directorio para que tambien tenga acceso a los residuos -->
+</BaseLayout>
