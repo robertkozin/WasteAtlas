@@ -17,35 +17,39 @@ const { wasteData, projects } = Astro.props
 const colours = categoryColors[wasteData.category]
 ---
 
+
 <main>
-  <section class="flex flex-row gap-2 p-5 pb-12">
-    <div class="flex-6">
+  <section id="waste_type" class="">
+    <div class="caja_grande">
       <h1>{wasteData.name}</h1>
-      <h2 style={`color: ${colours.sub}`}> 
+    </div>
+
+    <div id="waste_info" class="caja_50">
+      <div id="waste_text" class="">
+        <h2 style={`color: ${colours.sub}`}> 
         <!-- eso es js^^ los colores se meten de forma dinámica luego no se hace con css para evitar 3mil clases -->
         {wasteData.location}
       </h2>
+      <p class="">{wasteData.description}</p>
+      <!-- <p class="mt-3">{wasteData.fuente}</p>  METER APARTADO DE FUENTE-->
 
-      <dl class="mt-1">
-        <dt>Type of waste</dt>
-        <dd class="capitalize">{wasteData.category}</dd>
-      </dl>
+      </div>
 
-      <p class="mt-3">{wasteData.description}</p>
-    </div>
+     <div id="waste_image" class="">
+        <Image class="ml-auto h-0 min-h-full object-contain" alt="" src={wasteData.image_url ?? ""} inferSize></Image> 
+     </div>
 
-    <div class="flex-4">
-      <Image class="ml-auto h-0 min-h-full object-contain" alt="" src={wasteData.image_url ?? ""} inferSize />
+      <!-- necesario cambiar esto a características por nombre y convertir en botones
+      <div class="banner-wrap"> 
+        <div class="banner">
+          <span>{wasteData.characteristics}</span><span>{wasteData.characteristics}</span>
+        </div>
+      </div> -->
+
     </div>
   </section>
 
-  <section class="projects flex flex-col gap-10 p-10" style={`background: ${colours.banner}b3`}>
-    {projects.map(project => <WasteProject wasteData={wasteData} projectData={project} />)}
-  </section>
-
-  <div class="banner-wrap">
-    <div class="banner">
-      <span>{wasteData.characteristics}</span><span>{wasteData.characteristics}</span>
-    </div>
-  </div>
+    <section class="projects caja_50" style={`background: ${colours.banner}b3`}>
+      {projects.map(project => <WasteProject wasteData={wasteData} projectData={project} />)}
+    </section>
 </main>
