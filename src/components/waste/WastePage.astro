@@ -19,37 +19,41 @@ const colours = categoryColors[wasteData.category]
 
 
 <main>
-  <section id="waste_type" class="">
+  <div>
+    <button id="close_button" class="yellow_buttons"><u>Close</u></button>
+  </div>
+  <section id="waste_type" class="contenedor">
     <div class="caja_grande">
       <h1>{wasteData.name}</h1>
     </div>
+  </section>
+  <section class="">
 
-    <div id="waste_info" class="caja_50">
+     <section id="waste_info" class="caja_50 estatico">
       <div id="waste_text" class="">
-        <h2 style={`color: ${colours.sub}`}> 
+        <h3 style={`color: ${colours.sub}`}> 
         <!-- eso es js^^ los colores se meten de forma dinámica luego no se hace con css para evitar 3mil clases -->
         {wasteData.location}
-      </h2>
+      </h3>
       <p class="">{wasteData.description}</p>
       <!-- <p class="mt-3">{wasteData.fuente}</p>  METER APARTADO DE FUENTE-->
 
       </div>
-
-     <div id="waste_image" class="">
+      <!-- esto de abajo no está funcionando:((( -->
+     <div id="waste_image" class="caja_50">
         <Image class="ml-auto h-0 min-h-full object-contain" alt="" src={wasteData.image_url ?? ""} inferSize></Image> 
      </div>
-
-      <!-- necesario cambiar esto a características por nombre y convertir en botones
-      <div class="banner-wrap"> 
-        <div class="banner">
-          <span>{wasteData.characteristics}</span><span>{wasteData.characteristics}</span>
-        </div>
-      </div> -->
-
+     
+     <div id="waste_properties" class="caja_50">
+      <button class="boton_propiedades"> </button>
+     </div>
+  </section>
+  <section id="waste_info">
+    <div class="caja_50 scrolleable">
+    {projects.map(project => <WasteProject wasteData={wasteData} projectData={project} />)}
     </div>
   </section>
-
-    <section class="projects caja_50" style={`background: ${colours.banner}b3`}>
-      {projects.map(project => <WasteProject wasteData={wasteData} projectData={project} />)}
-    </section>
+  
+  </section>
+ 
 </main>

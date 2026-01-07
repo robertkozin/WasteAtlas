@@ -17,11 +17,11 @@ const colours = categoryColors[wasteData.category]
 ---
 
 <div class="project">
-  <h2 class="caja_50">
+  <h2 class="caja_grande">
     {projectData.name}
   </h2>
-  <div class="caja_50">
-    <div id="project_description" class="" style={`background: ${colours.banner}`} set:html={projectData.description}> 
+  <div class="caja_grande ">
+    <div id="project_description" class=""  set:html={projectData.description}> 
       <!-- se busca en el proyecto la descripción y la incluye en el div. 
        además /esto NOS DA IGUAL/como el lenguaje del que viene es html y lo vamos a meter en html 
        hay que ponerlo según set:html en vez de solo entre{}-->
@@ -35,3 +35,4 @@ const colours = categoryColors[wasteData.category]
    
   </div>
 </div>
+<br>

@@ -38,19 +38,58 @@ p {
   }
 }
 
+main, html {
+  height: 100vh; 
+  overflow: hidden; 
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.contenedor{
+  overflow: hidden;
+  margin:30px;
+  margin-bottom: 0px;
+  
+}
+
+.estatico{
+  position: fixed; 
+    width: 50%; 
+    height: 100vh; 
+    background: #f0f0f0;
+    padding: 20px;
+    overflow: hidden; 
+
+}
+
+.scrolleable{
+position: absolute; 
+    left: 50%; 
+    width: 50%; 
+    height: 100vh; 
+    background: #ffffff;
+    padding: 20px;
+    overflow-y: auto; 
+}
+
 
 .caja_grande{
-  width: 100%;
   background-color: white;
-  border: #000;
   border-width: 3px;
+  border-color: #000;
+  padding: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-top: 0px;
 }
+
 .caja_50{
-  width: 50%;
   background-color: white;
-  border: #000;
-  border-width: 3px; 
+  padding:20px;
+  margin:10px;
+  float:left;
 }
-.caja_50 img{
-  width: 100%;
+.yellow_buttons{
+  background-color:#FFFF00;
+  font-size: 28px;
 }
