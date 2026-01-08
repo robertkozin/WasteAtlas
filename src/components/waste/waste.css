@@ -24,7 +24,7 @@ h3 {
 }
 
 p {
-  font-size: 32px;
+  font-size: 18px;
   font-family: var(--font-switzer);
 }
 
@@ -83,12 +83,38 @@ position: absolute;
   margin-top: 0px;
 }
 
+.caja_grande + .caja_grande{
+  border-top: 0;
+}
+
 .caja_50{
   background-color: white;
   padding:20px;
   margin:10px;
   float:left;
 }
+
+.contenedor_flex{
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.boton_propiedades{
+ border-width: 2px; 
+ border-color: #000;
+ border-radius: 50px;
+
+  margin: 5px;
+  padding: 0px 10px 0px;
+ 
+  font-family: var(--font-switzer);
+  font-size: 28px;
+  font-weight: 500;
+
+}
+
 .yellow_buttons{
   background-color:#FFFF00;
   font-size: 28px;

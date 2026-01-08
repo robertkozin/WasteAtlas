@@ -7,19 +7,20 @@ export async function getStaticPaths() {
   const wastes = await getCollection("wastes")
   return wastes.map(waste => ({
     params: { waste: waste.data.slug },
-    props: { wasteData: waste.data },
+    props: { wasteData: waste.data, allWaste: wastes },
   }))
 }
 
 interface Props {
   wasteData: CollectionEntry<"wastes">["data"]
+  allWaste: CollectionEntry<"wastes">[]
 }
 
-const { wasteData } = Astro.props
+const { wasteData, allWaste } = Astro.props
 
 const projects = await getEntries(wasteData.project_refs).then(ps => ps.map(p => p.data))
 ---
 
 <BaseLayout title={`${wasteData.name} - ${wasteData.location}`}>
-  <WastePage wasteData={wasteData} projects={projects} />
+  <WastePage wasteData={wasteData} projects={projects} allWaste= {allWaste} />
 </BaseLayout>

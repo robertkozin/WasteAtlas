@@ -1,0 +1,48 @@
+---
+import type { CollectionEntry } from "astro:content"
+import { getAssetUrl } from "../lib/directus"
+import { Image } from "astro:assets"
+import { categoryColors } from "../lib/constants"
+
+// import "./waste.css"
+
+interface Props {
+//   projectData: CollectionEntry<"projects">["data"]
+  wasteData: CollectionEntry<"wastes">["data"]
+}
+
+const { 
+    // projectData, 
+    wasteData } = Astro.props
+
+const colours = categoryColors[wasteData.category]
+---
+<style>
+    .caja_card{
+        border:2px solid black;
+        padding: 5px 10px;
+    }
+    .tag_image{
+        position: fixed;
+        width: 30%;
+        padding: 5px;
+    }
+    .tag_info{
+        position 
+            left: 30%;
+        padding: 5px;
+
+    }
+</style>
+<div class="caja_card">
+    <div class="tag_image">
+         <!-- <Image src={projectData.image_urls[0]} width={50} alt="" inferSize /> -->
+    </div>
+    <div class="tag_info">
+        <p>{wasteData.name}</p>
+        <p>{wasteData.location}</p>
+    </div>
+    <!-- <p> {projectData.name}</p>-->
+   
+</div>
+<br>
