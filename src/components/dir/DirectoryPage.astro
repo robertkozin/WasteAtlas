@@ -164,4 +164,48 @@ const { wastes } = Astro.props
 
 </style>
 
-<script src="./dir.js"></script>
+<!--<script src="./dir.js"></script> -->
+<!--voy a poner aqui el JS a ver si funciona  FUNCIONAAAAAA-->
+<script>
+  function setupFilters() {
+    let activeFilter = null
+
+    const filterButtons = document.querySelectorAll('.filter-btn')
+    const cards = document.querySelectorAll('.directory-card')
+
+    filterButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const filterValue = this.getAttribute('data-filter')
+        
+        if (filterValue) {
+          if (activeFilter === filterValue) {
+            activeFilter = null
+            showAllCards()
+          } else {
+            activeFilter = filterValue
+            filterCards(filterValue)
+          }
+        }
+      })
+    })
+
+    function filterCards(category) {
+      cards.forEach(card => {
+        const cardCategory = card.getAttribute('data-category')
+        if (cardCategory === category) {
+          card.style.display = 'flex'
+        } else {
+          card.style.display = 'none'
+        }
+      })
+    }
+
+    function showAllCards() {
+      cards.forEach(card => {
+        card.style.display = 'flex'
+      })
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', setupFilters)
+</script>
