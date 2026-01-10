@@ -4,24 +4,24 @@ type Category = CollectionEntry<"wastes">["data"]["category"]
 
 export const categoryColors = {
   domestic: {
-    sub: "#9967C9",
-    banner: "#9B67CC",
-    bg: "#9967CA",
+    sub: "#FF0080",
+    banner: "#FF0080",
+    bg: "#FF0080",
   },
   construction: {
-    sub: "#FD4109",
-    banner: "#FC4008",
-    bg: "#FC4008",
+    sub: "#FF0000",
+    banner: "#FF0000",
+    bg: "#FF0000",
   },
   agricultural: {
-    sub: "#979C35",
-    banner: "#979C35",
-    bg: "#979C35",
+    sub: "#08FF18",
+    banner: "#08FF18",
+    bg: "#08FF18",
   },
   industrial: {
-    sub: "#B6B4BF",
-    banner: "#A1A1A1",
-    bg: "#A1A1A1",
+    sub: "#0810FF",
+    banner: "#0810FF",
+    bg: "#0810FF",
   },
   unknown: {
     sub: "#D8B4FE",
