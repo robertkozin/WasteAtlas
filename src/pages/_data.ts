@@ -34,4 +34,5 @@ let allWastesP = wastes.map (async waste=> {
     })
 })
 
-export let allWastes = (await Promise.all (allWastesP)).flat()
+export const allWastes = (await Promise.all (allWastesP)).flat()
+export type AllWastes = typeof allWastes

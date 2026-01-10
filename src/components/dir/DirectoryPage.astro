@@ -1,16 +1,17 @@
-<!-- pag completa con todas las tarjetas  -->
-
 ---
 
 import type { CollectionEntry } from "astro:content"
 import DirectoryItem from "./DirectoryItem.astro"
+import type {AllWastes} from "@pages/_data"
 
 interface Props {
-  wastes: CollectionEntry<"wastes">["data"][]
+  wastes: AllWastes
 }
 
 const { wastes } = Astro.props
 ---
+<!-- pag completa con todas las tarjetas  -->
+
 <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
 <h1>Hello World</h1>
 <button onclick="applyfilter()">click</button>

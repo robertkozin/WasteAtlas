@@ -8,10 +8,13 @@ import "./waste.css"
 import { categoryColors } from "../../lib/constants"
 import WasteCard from "@components/WasteCard.astro"
 
+import type { AllWastes } from "@pages/_data"
+import DirectoryItem from "@components/dir/DirectoryItem.astro"
+
 interface Props {
   wasteData: CollectionEntry<"wastes">["data"]
   projects: CollectionEntry<"projects">["data"][]
-  allWaste: CollectionEntry<"wastes">[]
+  allWaste: AllWastes
 }
 
 const { wasteData, projects, allWaste } = Astro.props
@@ -68,7 +71,7 @@ const colours = categoryColors[wasteData.category]
 
   <section id="property_info">
     <div class="caja_50 scrolleable">
-    {allWaste.map(waste => <WasteCard wasteData={waste.data} />)}
+    {allWaste.map(waste => <DirectoryItem waste={waste} />)}
     </div>
   </section>
   
