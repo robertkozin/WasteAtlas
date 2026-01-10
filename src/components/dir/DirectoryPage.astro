@@ -1,3 +1,5 @@
+<!-- pag completa con todas las tarjetas  -->
+
 ---
 
 import type { CollectionEntry } from "astro:content"
@@ -9,7 +11,7 @@ interface Props {
 
 const { wastes } = Astro.props
 ---
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+<!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
 <h1>Hello World</h1>
 <button onclick="applyfilter()">click</button>
 <ul>
@@ -21,4 +23,140 @@ const { wastes } = Astro.props
 
 <script src="./dir.js" >
     
-</script>
+</script>-->
+
+<div class="directory-page">
+  <div class="directory-container">
+    
+    <div class="filters-panel">
+      <h1 class="directory-title">Directory</h1>
+
+      <h3>type</h3>
+      <ul class="filter-list">
+        <li><button class="filter-btn" data-filter="agricultural">agricultural</button></li>
+        <li><button class="filter-btn" data-filter="industrial">industrial</button></li>
+        <li><button class="filter-btn" data-filter="domestic">domestic</button></li>
+      </ul>
+      
+      <h3>characteristics</h3>
+      <ul class="filter-list">
+        <li><button class="filter-btn">agricultural</button></li>
+        <li><button class="filter-btn">industrial</button></li>
+        <li><button class="filter-btn">domestic</button></li>
+        <li><button class="filter-btn">agricultural</button></li>
+        <li><button class="filter-btn">industrial</button></li>
+        <li><button class="filter-btn">domestic</button></li>
+        <li><button class="filter-btn">agricultural</button></li>
+        <li><button class="filter-btn">industrial</button></li>
+        <li><button class="filter-btn">domestic</button></li>
+        <li><button class="filter-btn">agricultural</button></li>
+        <li><button class="filter-btn">industrial</button></li>
+      </ul>
+
+      <a href="/" class="atlas-btn">ATLAS</a>
+    </div>
+
+    <div class="cards-grid">
+      {wastes.map(waste => <DirectoryItem waste={waste} />)}
+    </div>
+    
+  </div>
+</div>
+
+<style>
+  .directory-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(200, 200, 220, 0.6);
+    backdrop-filter: blur(3px);
+  }
+
+  .directory-container {
+    display: flex;
+    height: 100%;
+  }
+
+  .filters-panel {
+    width: 200px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border-right: 2px solid black;
+    overflow-y: auto;
+  }
+
+  .directory-title {
+    font-size: 22px;
+    margin: 0 0 20px 0;
+    font-weight: bold;
+  }
+
+  .filters-panel h3 {
+    margin: 15px 0 8px 0;
+    font-size: 14px;
+    font-weight: normal;
+  }
+
+  .filter-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .filter-list li {
+    margin: 3px 0;
+  }
+
+  .filter-btn {
+    background: none;
+    border: none;
+    padding: 3px 0;
+    cursor: pointer;
+    font-size: 12px;
+    text-align: left;
+  }
+
+  .filter-btn:hover {
+    text-decoration: underline;
+  }
+
+  .atlas-btn {
+    display: inline-block;
+    background: yellow;
+    border: 2px solid black;
+    padding: 8px 16px;
+    margin-top: 20px;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    font-size: 13px;
+  }
+
+  .cards-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 20px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  .cards-grid::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  .cards-grid::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .cards-grid::-webkit-scrollbar-thumb {
+    background: yellow;
+    border: 2px solid black;
+    border-radius: 0;
+  }
+</style>
+
+<script src="./dir.js"></script>

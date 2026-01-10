@@ -1,3 +1,5 @@
+/*funcionalidad de filtrar */
+
 console.log ('he')
 function applyfilter(){
     let items=document.querySelectorAll ('.item')
