@@ -1,18 +1,19 @@
 
-//cambiar el color de los botones on hover
-document.getElementsByClassName("boton_propiedades").addEventListener("hover", (event) =>{ 
- button.style.borderColor = colours.sub; //mal :-)
-}, false);
+var project_info = document.querySelector("#project_info")
+var property_info = document.querySelector("#property_info")
 
 //cuando click en boton mostrar el panel de filtro Y cuando click en botón filtrar
-function toggle (waste_info, property_info) {
-  hide(document.getElementById(waste_info).innerHTML);
-  show(document.getElementById(property_info).innerHTML);
+function toggle () {
+  if(project_info.hidden==true){
+    project_info.hidden=false;
+    property_info.hidden=true;
+  } else{
+    project_info.hidden=true;
+    property_info.hidden=false;
+  }
 }
 
+window.toggle=toggle;
 //cuando click en BACK ocultar panel de filtro
-function toggle2 (property_info, waste_info) {
-  hide(document.getElementById(property_info).innerHTML);
-  show(document.getElementById(waste_info).innerHTML);
-}
+
 //cuando click en directory item abrir pagina nueva

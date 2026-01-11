@@ -42,21 +42,21 @@ const colours = categoryColors[wasteData.category]
       </div>
       <figure>
         <div id="waste_properties" class="contenedor_flex overlap">
-          <button class="boton_propiedades"  onclick= "toggle ('waste_info', 'property_info')"> Botón </button>
+          <button class="boton_propiedades"  onclick= "toggle()"> Botón </button>
         </div>
         <Image class="object-fit" alt="" src={wasteData.image_url ?? ""} inferSize />
      </figure>
     </section>  
 
-    <section id="waste_info">
+    <section id="project_info">
       <div class="caja_dere scrolleable">
       {projects.map(project => <WasteProject wasteData={wasteData} projectData={project} />)}
       </div>
     </section> 
 
-    <section id="property_info" class="overlap" style={`background-color: ${colours.sub}`}>
+    <section id="property_info" hidden class="overlap" style={`background-color: ${colours.sub}`}>
       <div class="estatico encabezado overlap" style={`background-color: ${colours.sub}`}>
-        <button class="boton_archivador" onclick= "toggle2 ('property_info', 'waste_info')"> BACK</button>
+        <button class="boton_archivador" onclick= "toggle()"> BACK</button>
         <button class="boton_propiedades" onclick=""> Botón </button>
       </div>
       <div class="scrolleable">
