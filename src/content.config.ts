@@ -47,6 +47,7 @@ const wastes = defineCollection({
     location: z.string(),
     status: z.enum(["published", "ready", "draft", "archived", "unknown"]).catch("unknown"),
     category: z.enum(["domestic", "industrial", "agricultural", "construction", "unknown"]).catch("unknown"),
+    tags: z.array(z.string()),
     slug: z.string(),
     characteristics: z.string().default(""),
     image_ref: reference("images").nullable(),
