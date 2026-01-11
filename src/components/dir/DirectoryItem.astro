@@ -1,17 +1,15 @@
 ---
 import type { CollectionEntry } from "astro:content"
-import type {AllWastes} from "@pages/_data"
+import type { AllWastes } from "@pages/_data"
 interface Props {
-  waste: AllWastes [number]
+  waste: AllWastes[number]
 }
 
 const { waste } = Astro.props
 ---
 
-<!-- plantilla de cada tarjeta  -->
-<!--<li class="item">{waste.name}..{waste.category}</li> -->
-
-<div class="directory-card" data-category={waste.category}>
+<!-- plantilla de cada tarjeta  --><!--<li class="item">{waste.name}..{waste.category}</li> -->
+<div class="directory-card" data-category={waste.category} data-tags={waste.tags.join(" ")}>
   <div class="card-image">
     <img src={waste.image_url} alt={waste.name} />
   </div>

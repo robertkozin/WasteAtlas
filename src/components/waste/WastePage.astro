@@ -42,7 +42,7 @@ const colours = categoryColors[wasteData.category]
       </div>
       <figure>
         <div id="waste_properties" class="contenedor_flex overlap">
-          <button class="boton_propiedades"  onclick= "toggle()"> Botón </button>
+          {wasteData.tags.map(tag=><button class="boton_propiedades"  onclick= {`toggle('${tag}')`}>{tag}</button>)}
         </div>
         <Image class="object-fit" alt="" src={wasteData.image_url ?? ""} inferSize />
      </figure>
