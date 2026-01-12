@@ -193,8 +193,10 @@ const { wastes } = Astro.props
     function filterCards(category) {
       cards.forEach(card => {
         const cardCategory = card.getAttribute('data-category')
+       /*onst cardCategory = card */
         if (cardCategory === category) {
           card.style.display = 'flex'
+          /*tTimeout (())*/
         } else {
           card.style.display = 'none'
         }

@@ -28,7 +28,12 @@ const { waste } = Astro.props
     height: 110px;
     display: flex;
     flex-direction: row;
+    opacity: 1;
+    transition: opacity 0.4s ease; /*transicion a ver si sale */
   }
+      .directory-card.hiding {
+        opacity: 0;
+      }
 
   .card-image {
     width: 140px;

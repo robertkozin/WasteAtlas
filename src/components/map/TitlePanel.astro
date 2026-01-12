@@ -3,13 +3,16 @@
 ---
 
 <style is:global>
-  .title-area {
+  .title-area.panel {
     top: 10px;
     left: 10px;
     padding: 18px 20px;
     max-width: 564px;
     border-radius: 30px;
     transition: display 1s;
+    background-color:  yellow;
+    box-shadow: 0 0 40px rgba(255, 255, 0, 0.6);
+    color: black;
   }
 
   .title-area h1 {
@@ -17,18 +20,22 @@
     font-size: 32px;
     font-weight: 500;
     line-height: 1;
+    margin: 0;
+    color: black;
   }
 
-  .title-area button {
+  .title-area button.toggle-btn {
     position: absolute;
-    right: -20px;
-    bottom: -20px;
-    border-radius: 100px;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    width: auto;
+    height: auto;
+    font-size:24px;
+    cursor: pointer;
+    color: black;
   }
 
   .title-area.open section {
@@ -50,11 +57,31 @@
                     max-height 1s ease-in-out 0s,
                     max-width 1s ease-in-out 1s; */
   }
+
+ /* .directory-link
+  .submit-link {
+    display: inline-block;
+    margin-top: 10px;
+    margin-right: 15px;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    font-size: 14px;
+    background: linear-gradient(to top, yellow 30%, transparent 30%);
+    padding-bottom: 2px;
+  }
+
+  .close-text {
+    text-decoration: underline;
+    font-size: 14px;
+    font-weight: normal;
+  }*/
 </style>
 
 <header class="title-area panel">
-  <h1>Waste Marta</h1>
+  <h1>THE WASTE ATLAS</h1>
   <button class="panel text-3xl font-light" data-open=".title-area">+</button>
+    <span class="close-text">+</span>
   <section class="mt-2">
     <p>
       As designers, wouldn't it be amazing to visualize what unexplored, readily accessible, cheap, local materials
@@ -62,5 +89,11 @@
       as new material. We want to map the waste and classify it so that it finds a home; so that we start blurring the
       lines of what waste truly is.
     </p>
+    <p class="mt-2">
+      Contribute to the the Waste Atlas. Help us expand our database by submitting information about waste sources in your area. Your contribution will help designers discover new potential materials.    </p>
+
+     <button class="panel" style=" color: rgb(0, 0, 0); padding: 8px 16px; border-radius: 20px; margin-top: 10px;">contribute</button>
+
+      
   </section>
 </header>
