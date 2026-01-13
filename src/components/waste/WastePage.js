@@ -15,35 +15,55 @@ function toggle(tag = "") {
 
 window.toggle = toggle
 
+// //hover cambiod e color
+// var botton_hover = document.querySelector(".boton_propiedades")
+// botton_hover.onmouseover = function () {
+//   this.style.borderColor = "${colours.sub}"
+//   this.style.fontColor = "${colours.sub}"
+// }
+
 // FILTROS
+
 function setupFilters() {
+  //mira que filtros están activos a empezar el programa
   let activeFilter = null
+  //crea una lista de los botones y de las cards
+  const directoryItems = document.querySelectorAll(".directory-card")
+  const filterButtons = document.querySelectorAll(".filter-btn")
 
-  var directoryItem = document.querySelectorAll(".directory-card")
-  var filterButtons = document.querySelectorAll(".filter-btn")
+  // Para cada card en directory items le busca las data-tags
+  function filterCards(tag) {
+    directoryItems.forEach(card => {
+      const cardTags = card.getAttribute("data-tags")
 
+      // opciones: si el boton son todas las tags enseña todas las cards
+      if (!tag || tag === "all" || (cardTags && cardTags.includes(tag))) {
+        //, si el boton INCLUYE una tag
+        card.style.display = "flex" //enseña las tarjetas con dicha tag
+      } else {
+        card.style.display = "none" //y si no las oculta
+      }
+    })
+  }
+
+  // Evento de los filtros
   filterButtons.forEach(button => {
     button.addEventListener("click", function () {
-      var filterValue = this.getAttribute("data-filter")
-    })
-    function filterCards(tag) {
-      cards.forEach(card => {
-        const cardTag = card.getAttribute("data-tags")
-        if (cardTag === tag) {
-          card.style.display = "flex"
-        } else {
-          card.style.display = "none"
-        }
+      const filterValue = this.getAttribute("data-filter")
+
+      // enciendes un filtro que está en el bottón
+      activeFilter = filterValue
+
+      // aplicas la variable de filtevalue en la función de filtercards
+      filterCards(filterValue)
+
+      // Optional: Update button active states
+      filterButtons.forEach(btn => {
+        btn.classList.remove("active")
       })
-    }
+      this.classList.add("active")
+    })
   })
 }
 
-function showAllCards() {
-  cards.forEach(card => {
-    card.style.display = "flex"
-  })
-}
-
-/*ejcutar cuando pag carga */
 document.addEventListener("DOMContentLoaded", setupFilters)

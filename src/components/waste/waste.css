@@ -2,7 +2,7 @@ html,
 body {
   height: 100%;
 }
-
+/* tipografías */
 h1 {
   font-family: var(--font-switzer);
   font-size: 64px;
@@ -18,7 +18,6 @@ h2 {
 h3 {
   font-family: var(--font-erode);
   margin: 0;
-  color: #979c35;
   font-size: 40px;
   font-weight: 500;
 }
@@ -37,74 +36,88 @@ p {
   }
 }
 
-.barra-scroll::-webkit-scrollbar {
-    width: 14px;
-  }
-
-.barra-scroll::-webkit-scrollbar-thumb {
-  background: yellow;
-  border: 2px solid black;
-  border-radius: 10px;
-}
-
-
+/* cajas separadores y divisores */
 main,
 html {
   height: 100vh;
-  overflow: hidden;
+  overflow: hidden; 
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-.contenedor {
-  overflow: hidden;
-  margin: 30px;
-  margin-bottom: 0px;
+.titulo{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
-.object-fit{
-  width: 100%;
-  height: 40%;
-  margin: 20px 0px 20px;
-}
-.caja_izqui{
-  width: 50%;
-  height: 100vh;
-  background: white;
-  padding: 20px;
-  margin: 10px;
-  float: left;
-}
-.estatico {
-  position: fixed;
-  overflow: hidden;
-}
-
-.caja_dere{
-  left: 50%;
-  width: 50%;
-  padding: 20px;
-  margin: 10px;
-  float: right;
-  background: white;
-}
-.scrolleable {
-  height: 100vh;
-  overflow-y: auto;
-}
-
 .caja_grande {
   height: 15%;
-  position: relative;
+  width: 100%;
   background-color: white;
   border-width: 3px;
+  padding: 20px;
+  padding-top: 0;
+  padding-bottom: 0;
   border-color: #000;
 }
 
 .caja_grande + .caja_grande {
   border-top: 0;
 }
+.caja_izqui{
+  padding: 10px;
+  width: 50%;
+  height: 100vh;
+  background: white;
+  float: left;
+}
+.caja_dere{
+  padding: 10px;
+  padding-bottom: 200px;
+  left: 50%;
+  width: 50%;
+  float: right;
+  background: white;
+}
 
+.encabezado{
+  position: relative;
+  top: 0%;
+  border-color: #000;
+}
 
+#property_info{
+    top: 0%;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+  float: right;
+  padding: 40px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-width: 3px;
+  border-color: #000;
+}
+/* características de posición ubicación movimiento*/
+.contenedor {
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.scrolleable {
+  height: 100vh;
+  overflow-y: auto;
+
+}
+
+figure{
+  /* position: relative; */
+}
+
+.overlap{
+  position: absolute;
+}
 .contenedor_flex {
   display: flex;
   width: 100%;
@@ -112,6 +125,18 @@ html {
   flex-wrap: wrap;
 }
 
+.estatico {
+  position: fixed;
+  overflow: hidden;
+}
+
+.lista_waste{
+  gap: 10px; ;
+  display: flex;
+  flex-direction: column;
+}
+
+/* botones y sus propiedades */
 .boton_propiedades {
   background-color: white;
   border-width: 2px;
@@ -125,7 +150,12 @@ html {
   font-size: 28px;
   font-weight: 500;
 }
-.boton_propiedades-noclick{
+.filter-btn :hover{
+  /* border-color: ; color variable */
+  font-family: var(--font-erode);
+
+}
+.boton_propiedades-2{
   border-width: 2px;
   border-color: #000;
   border-radius: 50px;
@@ -136,14 +166,6 @@ html {
   font-family: var(--font-switzer);
   font-size: 28px;
   font-weight: 500;
-}
-
-figure{
-  position: relative;
-}
-
-.overlap{
-  position: absolute;
 }
 
 .yellow_buttons {
@@ -158,19 +180,44 @@ figure{
   font-size: 28px
 }
 
-.encabezado{
-  width: 100%;
-  height:15% ;
+/* la barra lateral */
+.barra-scroll::-webkit-scrollbar {
+    width: 14px;
+    position: absolute;
+  }
+
+.barra-scroll::-webkit-scrollbar-thumb {
+  background: yellow;
+  border: 2px solid black;
+  border-radius: 10px;
+  position: absolute;
 }
 
-#property_info{
-    top: 0%;
-    left: 50%;
-    width: 100%;
-    height: 100%;
-  float: left;
-  padding: 20px;
-  margin: 10px;
-  border-width: 3px;
-  border-color: #000;
+@media (max-width:1025px){
+  
+  main,
+  html {
+    height: inherit;
+    overflow: scroll;
+  }
+  .caja_dere{
+    float: inherit;
+    width: inherit;
+  }
+  .caja_izqui{
+    float: inherit;
+    width: inherit;
+  }
+  .contenedor {
+    overflow: inherit;
+  }
+.scrolleable {
+    height: inherit;
+    overflow-y: inherit;
+
+  }
+.estatico{
+  position: inherit;
+  overflow: inherit;
+}
 }
