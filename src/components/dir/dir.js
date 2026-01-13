@@ -15,48 +15,48 @@ function applyfilter(){
 }
 window.applyfilter = applyfilter*/
 
-function setupFilters () { /*funcion ppal que organiza todo */
-    let activeFilter = null
+function setupFilters() {
+  /*funcion ppal que organiza todo */
+  let activeFilter = null
 
-    const filterButtons = documen.querySelectorAll ('.filter-btn') /*busca los btn de filtro */
-    const cards = document.querySelectorAll ('.directory-card') /*busca las cards */
+  const filterButtons = documen.querySelectorAll(".filter-btn") /*busca los btn de filtro */
+  const cards = document.querySelectorAll(".directory-card") /*busca las cards */
 
-    filterButtons.forEach (BUTTON => {
-        BUTTON.addEventListener ('click', function (){ /*escuha cuando clic en btn */
-            const filterValue = this.getAttribute ('data-filter')
+  filterButtons.forEach(BUTTON => {
+    BUTTON.addEventListener("click", function () {
+      /*escuha cuando clic en btn */
+      const filterValue = this.getAttribute("data-filter")
 
-            if (filterValue) {
-                if (activeFilter === filterValue) {
-                    activeFilter = null
-                    showAllCards ()
-                } else {
-                    activeFilter = filterValue
-                    filterCards(filterValue)
-                }
-            }
-        })
-    })
-}
-
- function filterCards(category) { /*oculta las cards que NO coinciden */
-    cards.forEach(card => {
-      const cardCategory = card.getAttribute('data-category')
-      if (cardCategory === category) {
-        card.style.display = 'flex'
-      } else {
-        card.style.display = 'none'
+      if (filterValue) {
+        if (activeFilter === filterValue) {
+          activeFilter = null
+          showAllCards()
+        } else {
+          activeFilter = filterValue
+          filterCards(filterValue)
+        }
       }
     })
-  }
+  })
+}
 
-  function showAllCards() {
-    cards.forEach(card => {
-      card.style.display = 'flex'
-    })
-  }
+function filterCards(category) {
+  /*oculta las cards que NO coinciden */
+  cards.forEach(card => {
+    const cardCategory = card.getAttribute("data-category")
+    if (cardCategory === category) {
+      card.style.display = "flex"
+    } else {
+      card.style.display = "none"
+    }
+  })
+}
 
-  /*ejcutar cuando pag carga */
-  document.addEventListener('DOMContentLoaded', setupFilters)
+function showAllCards() {
+  cards.forEach(card => {
+    card.style.display = "flex"
+  })
+}
 
-
-
+/*ejcutar cuando pag carga */
+document.addEventListener("DOMContentLoaded", setupFilters)

@@ -22,7 +22,7 @@ const colours = categoryColors[wasteData.category]
 ---
 
 <main>
-   <!-- <div>
+  <!-- <div>
     <a id="close_button" class="yellow_buttons" href="http://localhost:4321/#1.3/40/0"><u>CLOSE</u></a>
   </div>  -->
   <section id="waste_type" class="contenedor">
@@ -42,26 +42,33 @@ const colours = categoryColors[wasteData.category]
       </div>
       <figure>
         <div id="waste_properties" class="contenedor_flex overlap">
-          {wasteData.tags.map(tag=><button class="boton_propiedades"  onclick= {`toggle('${tag}')`}>{tag}</button>)}
+          {
+            wasteData.tags.map(tag => (
+              <button class="boton_propiedades filter-btn" data-filter={wasteData.tags} onclick={`toggle('${tag}')`}>
+                {tag}
+              </button>
+            ))
+          }
         </div>
         <Image class="object-fit" alt="" src={wasteData.image_url ?? ""} inferSize />
-     </figure>
-    </section>  
+      </figure>
+    </section>
 
     <section id="project_info">
-      <div class="caja_dere scrolleable">
-      {projects.map(project => <WasteProject wasteData={wasteData} projectData={project} />)}
+      <div class="caja_dere scrolleable barra-scroll">
+        {projects.map(project => <WasteProject wasteData={wasteData} projectData={project} />)}
       </div>
-    </section> 
+    </section>
 
-    <section id="property_info" hidden class="overlap" style={`background-color: ${colours.sub}`}>
+    <section id="property_info" hidden class="overlap barra-scroll" style={`background-color: ${colours.sub}`}>
       <div class="estatico encabezado overlap" style={`background-color: ${colours.sub}`}>
-        <button class="boton_archivador" onclick= "toggle()"> BACK</button>
-        <button class="boton_propiedades" onclick=""> Botón </button>
+        <button class="boton_archivador" onclick="toggle()"> BACK</button>
+        <button class="boton_propiedades-noclick" onclick=""> Botón </button>
       </div>
       <div class="scrolleable">
         {allWaste.map(waste => <DirectoryItem waste={waste} />)}
       </div>
-    </section> 
+    </section>
+  </section>
+  <script src="./WastePage.js"></script>
 </main>
-<script src="./WastePage.js"></script>
