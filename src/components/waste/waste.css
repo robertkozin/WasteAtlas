@@ -6,8 +6,12 @@ body {
 h1 {
   font-family: var(--font-switzer);
   font-size: 64px;
-  margin: 0;
+  width: 100%;
+  margin: 10px;
   font-weight: 500;
+  background-color: white;
+  border-width: 3px;
+  border-color: #000;
 }
 h2 {
   font-family: var(--font-switzer);
@@ -52,13 +56,10 @@ html {
   justify-content: space-between;
 }
 .caja_grande {
-  height: 15%;
   width: 100%;
   background-color: white;
   border-width: 3px;
   padding: 20px;
-  padding-top: 0;
-  padding-bottom: 0;
   border-color: #000;
 }
 
@@ -99,10 +100,17 @@ html {
   border-width: 3px;
   border-color: #000;
 }
+
+#project_image{
+  margin-bottom: 20px;
+}
 /* características de posición ubicación movimiento*/
+button{
+  cursor: pointer;
+}
+
 .contenedor {
   overflow: hidden;
-  margin-bottom: 10px;
 }
 
 .scrolleable {
@@ -134,6 +142,13 @@ figure{
   gap: 10px; ;
   display: flex;
   flex-direction: column;
+  padding-right: 10px;
+  padding-bottom: 100px;
+}
+
+.img_car{
+  object-fit:cover;
+    max-height: 500px;
 }
 
 /* botones y sus propiedades */
@@ -150,11 +165,16 @@ figure{
   font-size: 28px;
   font-weight: 500;
 }
-.filter-btn :hover{
-  /* border-color: ; color variable */
-  font-family: var(--font-erode);
-
+.boton_propiedades:hover{
+  border-color:var(--btn-color);
+  color:var(--btn-color);
 }
+
+.active{
+  border-color:var(--btn-color);
+  color:var(--btn-color);
+}
+
 .boton_propiedades-2{
   border-width: 2px;
   border-color: #000;
@@ -168,9 +188,11 @@ figure{
   font-weight: 500;
 }
 
+
 .yellow_buttons {
   background-color: #ffff00;
   font-size: 28px;
+  
 }
 
 .boton_archivador{
@@ -178,6 +200,13 @@ figure{
   height: 80px;
   width: 80px;
   font-size: 28px
+}
+.filtro-cierre:hover{
+  text-decoration: line-through;
+  
+}
+.filtro-cierre{
+  margin-bottom: 25px;
 }
 
 /* la barra lateral */
@@ -193,7 +222,9 @@ figure{
   position: absolute;
 }
 
-@media (max-width:1025px){
+/* movil */
+
+@media (max-width:800px){
   
   main,
   html {
@@ -207,6 +238,7 @@ figure{
   .caja_izqui{
     float: inherit;
     width: inherit;
+    height:inherit;
   }
   .contenedor {
     overflow: inherit;
@@ -219,5 +251,12 @@ figure{
 .estatico{
   position: inherit;
   overflow: inherit;
+}
+#property_info{
+    top: inherit;
+    left: inherit;
+    width: 100%;
+    height: inherit;
+    float: inherit;
 }
 }

@@ -22,7 +22,6 @@ body,
   z-index: 1;
   position: absolute;
   backdrop-filter: blur(2px);
-  border-radius: 30px;
 }
 
 button.panel {
