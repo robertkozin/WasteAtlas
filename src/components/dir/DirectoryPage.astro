@@ -95,7 +95,7 @@ const { wastes } = Astro.props
   }
 
   .filters-panel h3 {
-    margin: 15px 0 8px 0;
+    margin: 10px 0 8px 0;
     font-size: 14px;
     font-weight: normal;
   }
@@ -103,7 +103,7 @@ const { wastes } = Astro.props
   .filter-list {
     list-style: none;
     padding: 0;
-    margin: 0 0 0 15px;
+    margin: 0 0 0 10px;
   }
 
   .filter-list li {
@@ -136,7 +136,7 @@ const { wastes } = Astro.props
   }
 
       /*.atlas-link:hover {
-        ??
+        ??si o na
       }*/
 
 
@@ -146,7 +146,7 @@ const { wastes } = Astro.props
     display: grid;
     grid-template-columns: repeat(3, 1fr); /*probar con 2-3 */
     gap: 15px;
-    padding: 20px;
+    padding: 70px 20px 20px 20px;
     overflow-y: scroll;
     overflow-x: hidden;
     
@@ -165,7 +165,10 @@ const { wastes } = Astro.props
 
 </style>
 
+
+
 <!--<script src="./dir.js"></script> -->
+
 <!--voy a poner aqui el JS a ver si funciona  FUNCIONAAAAAA-->
 <script>
   function setupFilters() {
@@ -193,19 +196,36 @@ const { wastes } = Astro.props
     function filterCards(category) {
       cards.forEach(card => {
         const cardCategory = card.getAttribute('data-category')
+<<<<<<< Updated upstream
        /*onst cardCategory = card */
         if (cardCategory === category) {
           card.style.display = 'flex'
           /*tTimeout (())*/
+=======
+        const cardElement = card
+        
+        if (cardCategory === category) {
+          cardElement.style.display = 'flex'
+          setTimeout(() => {
+            cardElement.classList.remove('hiding')
+          }, 10)
+>>>>>>> Stashed changes
         } else {
-          card.style.display = 'none'
+          cardElement.classList.add('hiding')
+          setTimeout(() => {
+            cardElement.style.display = 'none'
+          }, 400)
         }
       })
     }
 
     function showAllCards() {
       cards.forEach(card => {
-        card.style.display = 'flex'
+        const cardElement = card
+        cardElement.style.display = 'flex'
+        setTimeout(() => {
+          cardElement.classList.remove('hiding')
+        }, 10)
       })
     }
   }
