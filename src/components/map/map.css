@@ -17,7 +17,7 @@ body,
 
 .panel {
   background-color:yellow;
-  color: #ffffff;
+  color: #000000;
   border: none;
   z-index: 1;
   position: absolute;
