@@ -131,7 +131,7 @@ const { wastes } = Astro.props
   }
 
       /*.atlas-link:hover {
-        ??
+        ??si o na
       }*/
 
   .cards-grid {
@@ -188,11 +188,10 @@ const { wastes } = Astro.props
     function filterCards(category) {
       cards.forEach(card => {
         const cardCategory = card.getAttribute('data-category')
-       /*onst cardCategory = card */
+        const cardElement = card
+        
         if (cardCategory === category) {
-          card.style.display = "flex"
-          /*tTimeout (())*/
-=======
+
         const cardElement = card
         
         if (cardCategory === category) {
@@ -200,16 +199,23 @@ const { wastes } = Astro.props
           setTimeout(() => {
             cardElement.classList.remove('hiding')
           }, 10)
->>>>>>> Stashed changes
+
         } else {
-          card.style.display = 'none'
+          cardElement.classList.add('hiding')
+          setTimeout(() => {
+            cardElement.style.display = 'none'
+          }, 400)
         }
       })
     }
 
     function showAllCards() {
       cards.forEach(card => {
-        card.style.display = 'flex'
+        const cardElement = card
+        cardElement.style.display = 'flex'
+        setTimeout(() => {
+          cardElement.classList.remove('hiding')
+        }, 10)
       })
     }
   }
