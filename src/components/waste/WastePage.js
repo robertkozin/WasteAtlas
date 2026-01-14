@@ -1,5 +1,6 @@
 var project_info = document.querySelector("#project_info")
 var property_info = document.querySelector("#property_info")
+var botonCierre = document.querySelector(".filtro-cierre")
 
 //cuando click en boton mostrar el panel de filtro Y en BACK ocultar panel de filtro
 function toggle(tag = "") {
@@ -13,20 +14,9 @@ function toggle(tag = "") {
   }
 }
 
-window.toggle = toggle
-
-// //hover cambiod e color
-// var botton_hover = document.querySelector(".boton_propiedades")
-// botton_hover.onmouseover = function () {
-//   this.style.borderColor = "${colours.sub}"
-//   this.style.fontColor = "${colours.sub}"
-// }
-
 // FILTROS
 
 function setupFilters() {
-  //mira que filtros están activos a empezar el programa
-  let activeFilter = null
   //crea una lista de los botones y de las cards
   const directoryItems = document.querySelectorAll(".directory-card")
   const filterButtons = document.querySelectorAll(".filter-btn")
@@ -50,18 +40,21 @@ function setupFilters() {
   filterButtons.forEach(button => {
     button.addEventListener("click", function () {
       const filterValue = this.getAttribute("data-filter")
-
-      // enciendes un filtro que está en el bottón
-      activeFilter = filterValue
-
-      // aplicas la variable de filtevalue en la función de filtercards
-      filterCards(filterValue)
-
-      // Optional: Update button active states
-      filterButtons.forEach(btn => {
-        btn.classList.remove("active")
-      })
-      this.classList.add("active")
+      const closedButton = button.classList.contains("filtro-cierre")
+      const panelOpen = property_info.hidden == false
+      if (panelOpen && closedButton) {
+        toggle(filterValue)
+        filterButtons.forEach(btn => {
+          btn.classList.remove("active")
+        })
+      } else if (!panelOpen && !closedButton) {
+        botonCierre.innerHTML = filterValue
+        toggle(filterValue)
+        this.classList.add("active")
+        botonCierre.scrollIntoView({ behavior: "smooth", block: "center" })
+        // aplicas la variable de filtevalue en la función de filtercards
+        filterCards(filterValue)
+      }
     })
   })
 }

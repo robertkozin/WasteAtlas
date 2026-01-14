@@ -16,7 +16,7 @@ const map = new maplibre.Map({
   container: "map",
   //style: "https://api.maptiler.com/maps/dataviz/style.json?key=bLo8xe0MLrejy29a8JsL",
   // style: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
-  style: "/map/stylev5.json",
+  style: "/map/stylev6.json",
   center: [0, 40],
   zoom: 1.3,
   maxZoom: 9,
@@ -120,7 +120,7 @@ map.on("load", () => {
         "heatmap-radius": rad,
         "heatmap-intensity": 1,
         "heatmap-opacity": opacity,
-        "heatmap-color": color("#9967CA"),
+        "heatmap-color": color("#FF0080"),
       },
     },
     "place_village",
@@ -136,7 +136,7 @@ map.on("load", () => {
         "heatmap-radius": rad,
         "heatmap-intensity": 1,
         "heatmap-opacity": opacity,
-        "heatmap-color": color("#FC4008"),
+        "heatmap-color": color("#FF0000"),
       },
     },
     "place_village",
@@ -152,7 +152,7 @@ map.on("load", () => {
         "heatmap-radius": rad,
         "heatmap-intensity": 1,
         "heatmap-opacity": opacity,
-        "heatmap-color": color("#979C35"),
+        "heatmap-color": color("#08FF18"),
       },
     },
     "place_village",
@@ -168,7 +168,7 @@ map.on("load", () => {
         "heatmap-radius": rad,
         "heatmap-intensity": 1,
         "heatmap-opacity": opacity,
-        "heatmap-color": color("#A1A1A1"),
+        "heatmap-color": color("#0810FF"),
       },
     },
     "place_village",
@@ -184,15 +184,15 @@ map.on("load", () => {
         "match",
         ["get", "category"],
         "domestic",
-        "#9967CA", // Purple
+        "#FF0080", // Purple
         "construction",
-        "#FC4008", // Red
+        "#FF0000", // Red
         "commercial",
         "#FC4008", // Red
         "agricultural",
-        "#979C35", // Green
+        "#08FF18", // Green
         "industrial",
-        "#A1A1A1", // Grey
+        "#0810FF", // Grey
         "#ffffff", // Default color for any other category
       ],
       "circle-opacity": 1,

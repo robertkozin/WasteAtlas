@@ -22,9 +22,9 @@ const colours = categoryColors[wasteData.category]
 ---
 
 <main>
-  <section id="waste_type" class="contenedor">
-    <div class="caja_grande titulo">
-      <h1>{wasteData.name}</h1><a id="close_button" class="yellow_buttons" href="/"><u>CLOSE</u></a>
+  <section class="contenedor">
+    <div class="titulo">
+      <h1>{wasteData.name}</h1><a class="yellow_buttons" href="/"><u>CLOSE</u></a>
     </div>
   </section>
   <section>
@@ -40,13 +40,13 @@ const colours = categoryColors[wasteData.category]
         <div id="waste_properties" class="contenedor_flex overlap">
           {
             wasteData.tags.map(tag => (
-              <button class="boton_propiedades filter-btn" data-filter={tag} onclick={`toggle('${tag}')`}>
+              <button class="boton_propiedades filter-btn" data-filter={tag} style={`--btn-color:${colours.sub}`}>
                 {tag}
               </button>
             ))
           }
         </div>
-        <Image class="object-fit" alt="" src={wasteData.image_url ?? ""} inferSize />
+        <Image class="img_car" alt="" src={wasteData.image_url ?? ""} inferSize />
       </figure>
     </section>
 
@@ -59,16 +59,10 @@ const colours = categoryColors[wasteData.category]
     <section id="property_info" hidden class="overlap barra-scroll" style={`background-color: ${colours.sub}`}>
       <div style={`background-color: ${colours.sub}`}>
         <div class="encabezado">
-          <!-- <button
-            class="boton_propiedades-2 filter-btn"
-            data-filter={tag}
-            onclick="toggle()"
-            onclick={`toggle('${tag}')`}>
-            {tag}
-          </button> -->
+          <button class="boton_propiedades-2 filter-btn filtro-cierre"> placeholder </button>
         </div>
       </div>
-      <div class="scrolleable lista_waste">
+      <div class="scrolleable barra-scroll lista_waste">
         {allWaste.map(waste => <DirectoryItem waste={waste} />)}
       </div>
     </section>

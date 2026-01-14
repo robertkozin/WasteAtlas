@@ -1,8 +1,7 @@
 ---
-
 import type { CollectionEntry } from "astro:content"
 import DirectoryItem from "./DirectoryItem.astro"
-import type {AllWastes} from "@pages/_data"
+import type { AllWastes } from "@pages/_data"
 
 interface Props {
   wastes: AllWastes
@@ -10,9 +9,8 @@ interface Props {
 
 const { wastes } = Astro.props
 ---
-<!-- pag completa con todas las tarjetas  -->
 
-<!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+<!-- pag completa con todas las tarjetas  --><!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
 <h1>Hello World</h1>
 <button onclick="applyfilter()">click</button>
 <ul>
@@ -25,10 +23,8 @@ const { wastes } = Astro.props
 <script src="./dir.js" >
     
 </script>-->
-
 <div class="directory-page">
   <div class="directory-container">
-    
     <div class="filters-panel">
       <h1 class="directory-title">Directory</h1>
 
@@ -38,7 +34,7 @@ const { wastes } = Astro.props
         <li><button class="filter-btn" data-filter="industrial">industrial</button></li>
         <li><button class="filter-btn" data-filter="domestic">domestic</button></li>
       </ul>
-      
+
       <h3>characteristics</h3>
       <ul class="filter-list">
         <li><button class="filter-btn">agricultural</button></li>
@@ -60,7 +56,6 @@ const { wastes } = Astro.props
     <div class="cards-grid">
       {wastes.map(waste => <DirectoryItem waste={waste} />)}
     </div>
-    
   </div>
 </div>
 
@@ -123,12 +118,12 @@ const { wastes } = Astro.props
     text-decoration: underline;
   }
 
-
   .atlas-link {
+    font-family: var(--font-switzer);
     margin-top: auto;
     text-decoration: none;
     color: black;
-    font-size: 18px;
+    font-size: 28px;
     padding-bottom: 2px;
     align-self: flex-start;
     background: linear-gradient(to top, yellow 80%);
@@ -136,12 +131,11 @@ const { wastes } = Astro.props
   }
 
       /*.atlas-link:hover {
-        ??si o na
+        ??
       }*/
 
-
-
-  .cards-grid { /*las dos columnitas separadas */
+  .cards-grid {
+    /*las dos columnitas separadas */
     flex: 1;
     display: grid;
     grid-template-columns: repeat(3, 1fr); /*probar con 2-3 */
@@ -149,10 +143,9 @@ const { wastes } = Astro.props
     padding: 70px 20px 20px 20px;
     overflow-y: scroll;
     overflow-x: hidden;
-    
   }
 
- /*scroll PARA LOLA. COPIAR ESTO */
+  /*scroll PARA LOLA. COPIAR ESTO */
   .cards-grid::-webkit-scrollbar {
     width: 14px;
   }
@@ -162,7 +155,6 @@ const { wastes } = Astro.props
     border: 2px solid black;
     border-radius: 10px;
   }
-
 </style>
 
 
@@ -174,13 +166,13 @@ const { wastes } = Astro.props
   function setupFilters() {
     let activeFilter = null
 
-    const filterButtons = document.querySelectorAll('.filter-btn')
-    const cards = document.querySelectorAll('.directory-card')
+    const filterButtons = document.querySelectorAll(".filter-btn")
+    const cards = document.querySelectorAll(".directory-card")
 
     filterButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        const filterValue = this.getAttribute('data-filter')
-        
+      button.addEventListener("click", function () {
+        const filterValue = this.getAttribute("data-filter")
+
         if (filterValue) {
           if (activeFilter === filterValue) {
             activeFilter = null
@@ -196,10 +188,9 @@ const { wastes } = Astro.props
     function filterCards(category) {
       cards.forEach(card => {
         const cardCategory = card.getAttribute('data-category')
-<<<<<<< Updated upstream
        /*onst cardCategory = card */
         if (cardCategory === category) {
-          card.style.display = 'flex'
+          card.style.display = "flex"
           /*tTimeout (())*/
 =======
         const cardElement = card
@@ -211,24 +202,17 @@ const { wastes } = Astro.props
           }, 10)
 >>>>>>> Stashed changes
         } else {
-          cardElement.classList.add('hiding')
-          setTimeout(() => {
-            cardElement.style.display = 'none'
-          }, 400)
+          card.style.display = 'none'
         }
       })
     }
 
     function showAllCards() {
       cards.forEach(card => {
-        const cardElement = card
-        cardElement.style.display = 'flex'
-        setTimeout(() => {
-          cardElement.classList.remove('hiding')
-        }, 10)
+        card.style.display = 'flex'
       })
     }
   }
 
-  document.addEventListener('DOMContentLoaded', setupFilters)
+  document.addEventListener("DOMContentLoaded", setupFilters)
 </script>
