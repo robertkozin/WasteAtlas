@@ -108,9 +108,7 @@ html {
   margin-bottom: 20px;
 }
 /* características de posición ubicación movimiento*/
-button{
-  cursor: pointer;
-}
+
 
 .contenedor {
   overflow: hidden;
@@ -155,6 +153,10 @@ figure{
 }
 
 /* botones y sus propiedades */
+button{
+  cursor: pointer;
+}
+
 .boton_propiedades {
   background-color: white;
   border-width: 2px;
