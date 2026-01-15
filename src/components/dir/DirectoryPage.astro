@@ -130,7 +130,7 @@ const { wastes } = Astro.props
     text-decoration: underline;
   }
 
-      /*.atlas-link:hover {
+  /*.atlas-link:hover {
         ??si o na
       }*/
 
@@ -156,8 +156,6 @@ const { wastes } = Astro.props
     border-radius: 10px;
   }
 </style>
-
-
 
 <!--<script src="./dir.js"></script> -->
 
@@ -187,23 +185,19 @@ const { wastes } = Astro.props
 
     function filterCards(category) {
       cards.forEach(card => {
-        const cardCategory = card.getAttribute('data-category')
-        const cardElement = card
-        
-        if (cardCategory === category) {
+        const cardCategory = card.getAttribute("data-category")
 
         const cardElement = card
-        
+
         if (cardCategory === category) {
-          cardElement.style.display = 'flex'
+          cardElement.style.display = "flex"
           setTimeout(() => {
-            cardElement.classList.remove('hiding')
+            cardElement.classList.remove("hiding")
           }, 10)
-
         } else {
-          cardElement.classList.add('hiding')
+          cardElement.classList.add("hiding")
           setTimeout(() => {
-            cardElement.style.display = 'none'
+            cardElement.style.display = "none"
           }, 400)
         }
       })
@@ -212,9 +206,9 @@ const { wastes } = Astro.props
     function showAllCards() {
       cards.forEach(card => {
         const cardElement = card
-        cardElement.style.display = 'flex'
+        cardElement.style.display = "flex"
         setTimeout(() => {
-          cardElement.classList.remove('hiding')
+          cardElement.classList.remove("hiding")
         }, 10)
       })
     }
