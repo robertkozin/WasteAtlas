@@ -67,6 +67,23 @@
                     max-height 1s ease-in-out 1s; */
   }
 
+  .contribute-btn {
+    margin-top: 15px;
+    font-family: var(--font-switzer);
+    color: black;
+    font-size: 28px;
+    padding-bottom: 2px;
+    background: linear-gradient(to top, yellow 80%);
+    text-decoration: underline;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  .contribute-btn:hover {
+    opacity: 0.8;
+  }
+
   .title-area:not(.open) section {
     display: none;
     /* max-height: 0;
@@ -113,7 +130,21 @@
       Contribute to the the Waste Atlas. Help us expand our database by submitting information about waste sources in
       your area. Your contribution will help designers discover new potential materials.
     </p>
+    <button class="contribute-btn" id="contribute-btn">contribute</button>
     <!-- 
     <button class="panel" style=" color: rgb(0, 0, 0); padding: 8px 16px; margin-top: 10px;">contribute</button> -->
   </section>
 </header>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const contributeBtn = document.querySelector('#contribute-btn')
+    const submitDialog = document.querySelector('#submit-dialog')
+    
+    if (contributeBtn && submitDialog) {
+      contributeBtn.addEventListener('click', () => {
+        submitDialog.showModal()
+      })
+    }
+  })
+</script>
