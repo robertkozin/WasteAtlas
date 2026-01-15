@@ -67,3 +67,34 @@
   }
 </style>
 <a href="/directory" class="atlas-link submit">DIRECTORY</a>
+
+<dialog id="submit-dialog" class="panel">
+  <h2>CONTRIBUTE TO THE WASTE ATLAS</h2>
+  <p class="text-lg">
+    Help us expand our database by submitting information about waste sources in your area! Your contribution will help
+    designers discover new potential materials.
+  </p>
+  <div class="flex flex-row gap-4">
+    <button id="close-dialog-btn" class="rounded border border-white px-2 py-1 text-xl">close</button>
+    
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfMDb1cRH8I07CLu9XBmOjz8kIOplMNrOg16Lv1OCvKpK6Ydg/viewform?usp=sharing"
+      target="_blank"
+      class="rounded border border-white bg-white px-2 py-1 text-xl text-black">submit</a>
+  </div>
+</dialog>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const closeBtn = document.querySelector('#close-dialog-btn')
+    const dialog = document.querySelector('#submit-dialog')
+    
+    if (closeBtn && dialog) {
+      closeBtn.addEventListener('click', () => {
+        const confirmed = confirm('are you sure you don´t want to be part of this project? :)')
+        if (confirmed) {
+          dialog.close()
+        }
+      })
+    }
+  })
+</script>

@@ -8,10 +8,12 @@
     left: 10px;
     padding: 18px 20px;
     max-width: 400px;
-    /* border-radius: 30px; */
+    border-radius: 30px; 
     transition: all 0.3s ease;
     background-color: yellow;
+    box-shadow: 0 0 40px rgba(255, 255, 0, 0.6);
     color: black;
+    /*filter: blur(0.5rem);NO SALE EL BLUS DE LAS NARICES*/
     /* box-shadow: 0 0 60px rgba(255, 255, 0, 0.6); */
   }
   .title-area.panel::before {
@@ -64,6 +66,23 @@
                     max-height 1s ease-in-out 1s; */
   }
 
+  .contribute-btn {
+    margin-top: 15px;
+    font-family: var(--font-switzer);
+    color: black;
+    font-size: 28px;
+    padding-bottom: 2px;
+    background: linear-gradient(to top, yellow 80%);
+    text-decoration: underline;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  .contribute-btn:hover {
+    opacity: 0.8;
+  }
+
   .title-area:not(.open) section {
     display: none;
     /* max-height: 0;
@@ -110,7 +129,21 @@
       Contribute to the the Waste Atlas. Help us expand our database by submitting information about waste sources in
       your area. Your contribution will help designers discover new potential materials.
     </p>
+    <button class="contribute-btn" id="contribute-btn">contribute</button>
     <!-- 
     <button class="panel" style=" color: rgb(0, 0, 0); padding: 8px 16px; margin-top: 10px;">contribute</button> -->
   </section>
 </header>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const contributeBtn = document.querySelector('#contribute-btn')
+    const submitDialog = document.querySelector('#submit-dialog')
+    
+    if (contributeBtn && submitDialog) {
+      contributeBtn.addEventListener('click', () => {
+        submitDialog.showModal()
+      })
+    }
+  })
+</script>

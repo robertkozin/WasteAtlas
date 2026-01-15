@@ -8,6 +8,12 @@ interface Props {
 }
 
 const { wastes } = Astro.props
+
+let tagsDuplicate = wastes.flatMap(w => w.tags)
+let tagsUnique = new Set(tagsDuplicate)
+let tagsList = Array.from(tagsUnique)
+let allTags = tagsList.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }))
+console.log(allTags)
 ---
 
 <!-- pag completa con todas las tarjetas  --><!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
@@ -37,17 +43,15 @@ const { wastes } = Astro.props
 
       <h3>characteristics</h3>
       <ul class="filter-list">
-        <li><button class="filter-btn">agricultural</button></li>
-        <li><button class="filter-btn">industrial</button></li>
-        <li><button class="filter-btn">domestic</button></li>
-        <li><button class="filter-btn">agricultural</button></li>
-        <li><button class="filter-btn">industrial</button></li>
-        <li><button class="filter-btn">domestic</button></li>
-        <li><button class="filter-btn">agricultural</button></li>
-        <li><button class="filter-btn">industrial</button></li>
-        <li><button class="filter-btn">domestic</button></li>
-        <li><button class="filter-btn">agricultural</button></li>
-        <li><button class="filter-btn">industrial</button></li>
+        {
+          allTags.map(tag => (
+            <li>
+              <button class="filter-btn" data-filter={tag}>
+                {tag}
+              </button>
+            </li>
+          ))
+        }
       </ul>
 
       <a href="/" class="atlas-link">ATLAS</a>
@@ -67,7 +71,6 @@ const { wastes } = Astro.props
     width: 100vw;
     height: 100vh;
     background: rgba(200, 200, 220, 0.6);
-    backdrop-filter: blur(3px);
   }
 
   .directory-container {
@@ -185,19 +188,14 @@ const { wastes } = Astro.props
 
     function filterCards(category) {
       cards.forEach(card => {
-        const cardCategory = card.getAttribute('data-category')
+        const cardCategory = card.getAttribute("data-category")
+
         const cardElement = card
-        
-        if (cardCategory === category) {
-          cardElement.style.display = 'flex'
-          setTimeout(() => {
-            cardElement.classList.remove("hiding")
-          }, 10)
+
+        if (cardCategory?.includes(category)) {
+          cardElement.classList.remove("hiding")
         } else {
           cardElement.classList.add("hiding")
-          setTimeout(() => {
-            cardElement.style.display = "none"
-          }, 400)
         }
       })
     }
@@ -205,10 +203,8 @@ const { wastes } = Astro.props
     function showAllCards() {
       cards.forEach(card => {
         const cardElement = card
-        cardElement.style.display = "flex"
-        setTimeout(() => {
-          cardElement.classList.remove("hiding")
-        }, 10)
+
+        cardElement.classList.remove("hiding")
       })
     }
   }
