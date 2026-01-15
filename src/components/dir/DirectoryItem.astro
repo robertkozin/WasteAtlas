@@ -9,7 +9,7 @@ const { waste } = Astro.props
 ---
 
 <!-- plantilla de cada tarjeta  --><!--<li class="item">{waste.name}..{waste.category}</li> -->
-<a href={`/waste/${waste.slug}`} class="directory-card" data-category={waste.category} data-tags={waste.tags.join(" ")}>
+<a href={`/waste/${waste.slug}`} class="directory-card" data-category={waste.category + " " + waste.tags.join(" ")} data-tags={waste.tags.join(" ")}>
   <div class="card-image">
     <img src={waste.image_url} alt={waste.name} />
   </div>
@@ -21,6 +21,8 @@ const { waste } = Astro.props
 </a>
 
 <style>
+ 
+
   .directory-card {
     border: 2px solid black;
     background: transparent;
@@ -76,5 +78,9 @@ const { waste } = Astro.props
     margin: 4px 0;
     font-size: 12px;
     font-weight: 600;
+  }
+
+   .hiding {
+    display: none;
   }
 </style>
